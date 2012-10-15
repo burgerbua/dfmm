@@ -1,3 +1,27 @@
+// Copyright (c) 2012, Matthias Messner
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+// 
+//  * Redistributions of source code must retain the above copyright notice,
+// this list of conditions and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright notice,
+// this list of conditions and the following disclaimer in the documentation
+// and/or other materials provided with the distribution.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
 // system includes
 #include <iostream>
 #include <fstream>
@@ -222,237 +246,6 @@ int main( int argc, char * argv[ ] )
 
 
 	delete [] y;
-
-	////////////////////////////////////////////////////
-	std::cout << "\n- Overall time " << omp_get_wtime( ) - t_0
-            << " s" << std::endl;
-	////////////////////////////////////////////////////
-
-
-	return 0;
-} 	
-// system includes
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include <utility>
-#include <algorithm>
-#include <omp.h>
-
-
-// qbdfmm
-#include "sources/dimordertraits.hpp"
-
-#include "sources/blas.h"
-#include "sources/functions.hpp"
-
-#include "sources/mapping.hpp"
-#include "sources/chebyshev.hpp"
-#include "sources/tensor.hpp"
-
-#include "sources/aca.hpp"
-
-#include "sources/kernelfunctions.hpp"
-
-
-
-// y = UV'x where U,V are of size N times k
-template <typename T>
-void applyUV(const unsigned int N, const unsigned int k,
-						 const T *const U, const T *const V,
-						 const T *const x, T *const y)
-{
-	T *const temp = new T [k];
-	blas::gemhv(N, k, 1., const_cast<T*const>(V), const_cast<T*const>(x), temp);
-	blas::gemv( N, k, 1., const_cast<T*const>(U), temp, y);
-	delete [] temp;
-}
-
-
-
-int main( int argc, char * argv[ ] )
-{
-	// start timer
-	const double t_0 = omp_get_wtime( );
-
-  const unsigned int DIM   = 3;  
-	const unsigned int ORDER = 5;
-	const double epsilon = 1e-5;
-
-	std::cout << "\n= (order,eps) = (" << ORDER << "," << epsilon << ")"
-						<< std::endl;
-
-	const unsigned int nnodes = BasisTraits<ORDER,DIM>::nnodes;
-
-	typedef DimTraits<DIM>::point_type point_type;
-	typedef Chebyshev< ORDER>          basis_type;
-  typedef Tensor<DIM,ORDER>         tensor_type; 
-
-
-	const double extension = 2.;
-	const point_type cx(0.,           0., 0.);
-	const point_type cy(5.*extension, 0., 0.);
-
-
-	// local to global mapper
-	map_loc_glob<DIM> map_l2g_x(cx, extension);
-	map_loc_glob<DIM> map_l2g_y(cy, extension);
-
-	// coordinates
-	point_type x[nnodes];
-	point_type y[nnodes];
-	for (unsigned int n=0; n<nnodes; ++n)
-		for (unsigned int d=0; d<DIM; ++d) {
-			x[n][d] = map_l2g_x(d, basis_type::nodes[tensor_type::node_ids[n][d]]);
-			y[n][d] = map_l2g_y(d, basis_type::nodes[tensor_type::node_ids[n][d]]);
-		}
-	
-
-	////////////////////////////////////////////////////////////////////
-	std::cout << "\nLaplace kernel -> real valued ACA" << std::endl;
-	////////////////////////////////////////////////////////////////////
-	{
-		// define kernel function
-		typedef KernelFunction<LAPLACE3D> kernel_type;
-		kernel_type kernel;
-		EntryComputer<kernel_type,point_type>
-			computer(nnodes, x, nnodes, y, kernel);
-
-		// random source vector
-		double *const w = new double [nnodes];
-		for (unsigned int n=0; n<nnodes; ++n)
-			w[n] = (double)rand()/(double)RAND_MAX;
-
-		// direct computation
-		double *const K = new double [nnodes * nnodes];
-		computer(0, nnodes, 0, nnodes, K);
-		double *const p = new double [nnodes];
-		blas::gemv(nnodes, nnodes, 1., K, w, p);
-
-		// fully pivoted ACA
-		double *const R = new double [nnodes * nnodes];
-		blas::copy(nnodes * nnodes, K, R);
-		const double tf0 = omp_get_wtime();
-		double *Uf, *Vf;
-		unsigned int rankf;
-		dfmm::fACA(R, nnodes, nnodes, epsilon, Uf, Vf, rankf);
-		double *const pf = new double [nnodes];
-		applyUV(nnodes, rankf, Uf, Vf, w, pf);
-		const double tf1 = omp_get_wtime();
-
-		// partially pivoted ACA
-		const double tp0 = omp_get_wtime();
-		double *Up, *Vp;
-		unsigned int rankp;
-		dfmm::pACA(computer, nnodes, nnodes, epsilon, Up, Vp, rankp);
-		double *const pp = new double [nnodes];
-		applyUV(nnodes, rankp, Up, Vp, w, pp);
-		const double tp1 = omp_get_wtime();
-
-		std::cout << "- fACA (k="<< rankf
-							<<  ", t=" << tf1-tf0 << "s): \tL2 error = "
-							<< computeL2norm( nnodes, p, pf)
-							<< "\t Inf error = " << computeINFnorm(nnodes, p, pf)
-							<< std::endl;
-		std::cout << "- pACA (k=" << rankp
-							<<  ", t=" << tp1-tp0 << "s): \tL2 error = "
-							<< computeL2norm( nnodes, p, pp)
-							<< "\t Inf error = " << computeINFnorm(nnodes, p, pp)
-							<< std::endl;
-
-
-		delete [] K;
-		delete [] R;
-		delete [] Uf;
-		delete [] Vf;
-		delete [] Up;
-		delete [] Vp;
-
-		delete [] w;
-		delete [] p;
-		delete [] pf;
-		delete [] pp;
-	}
-
-
-
-
-	////////////////////////////////////////////////////////////////////
-	std::cout << "\nHelmholtz kernel -> complex valued ACA" << std::endl;
-	////////////////////////////////////////////////////////////////////
-	{
-		// required command line arguments
-		if (argc != 2) {
-			std::cerr << "Wrong number of command line arguments" << std::endl;
-			exit(-1);
-		}
-		const double wavenum = atof(argv[1]);
-		
-		// define kernel function
-		typedef KernelFunction<HELMHOLTZ3D> kernel_type;
-		typedef kernel_type::value_type      value_type;
-	  kernel_type kernel(value_type(0.,wavenum));
-		EntryComputer<kernel_type,point_type>
-			computer(nnodes, x, nnodes, y, kernel);
-
-		// random source vector
-		value_type *const w = new value_type [nnodes];
-		for (unsigned int n=0; n<nnodes; ++n)
-			w[n] = value_type((double)rand()/(double)RAND_MAX,
-												(double)rand()/(double)RAND_MAX);
-
-		// direct computation
-		value_type *const K = new value_type [nnodes * nnodes];
-		computer(0, nnodes, 0, nnodes, K);
-		value_type *const p = new value_type [nnodes];
-		blas::gemv(nnodes, nnodes, 1., K, w, p);
-
-		// fully pivoted ACA
-		value_type *const R = new value_type [nnodes * nnodes];
-		blas::copy(nnodes * nnodes, K, R);
-		const double tf0 = omp_get_wtime();
-		value_type *Uf, *Vf;
-		unsigned int rankf;
-		dfmm::fACA(R, nnodes, nnodes, epsilon, Uf, Vf, rankf);
-		value_type *const pf = new value_type [nnodes];
-		applyUV(nnodes, rankf, Uf, Vf, w, pf);
-		const double tf1 = omp_get_wtime();
-
-		// partially pivoted ACA
-		const double tp0 = omp_get_wtime();
-		value_type *Up, *Vp;
-		unsigned int rankp;
-		dfmm::pACA(computer, nnodes, nnodes, epsilon, Up, Vp, rankp);
-		value_type *const pp = new value_type [nnodes];
-		applyUV(nnodes, rankp, Up, Vp, w, pp);
-		const double tp1 = omp_get_wtime();
-
-		std::cout << "- fACA (k="<< rankf
-							<<  ", t=" << tf1-tf0 << "s): \tL2 error = "
-							<< computeL2norm( nnodes, p, pf)
-							<< "\t Inf error = " << computeINFnorm(nnodes, p, pf)
-							<< std::endl;
-		std::cout << "- pACA (k=" << rankp
-							<<  ", t=" << tp1-tp0 << "s): \tL2 error = "
-							<< computeL2norm( nnodes, p, pp)
-							<< "\t Inf error = " << computeINFnorm(nnodes, p, pp)
-							<< std::endl;
-
-		delete [] K;
-		delete [] R;
-		delete [] Uf;
-		delete [] Vf;
-		delete [] Up;
-		delete [] Vp;
-
-		delete [] w;
-		delete [] p;
-		delete [] pf;
-		delete [] pp;
-	}
-
-
 
 	////////////////////////////////////////////////////
 	std::cout << "\n- Overall time " << omp_get_wtime( ) - t_0
