@@ -52,27 +52,27 @@ template <int DIM>
 class Level
 {
   // typedefs
-	typedef typename DimTraits<DIM>::point_type point_type;
-	typedef typename DimTraits<DIM>::point_int_type point_int_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_int_type point_int_type;
   typedef typename Frequency_Regime<DIM>::admissibility_info admissibility_info;
 
   
   // private member variables  
   Frequency_Regime<DIM>* regime; //<! frequency regime (high or low)
-	const unsigned int nlevel;     //!< level index
+  const unsigned int nlevel;     //!< level index
   const bool is_leaf;            //!< is leaf level or not
   const double diam;             //!< cluster diameter
   
   
 public:
-	explicit Level(const unsigned int _nlevel,
+  explicit Level(const unsigned int _nlevel,
                  const double _diam,
                  const bool _is_leaf)
     : regime(new Frequency_Regime<DIM>()),
       nlevel(_nlevel),
       is_leaf(_is_leaf),
       diam(_diam)
-	{}
+  {}
   
   
   
@@ -84,44 +84,44 @@ public:
   
   
   
-	/**
-	 * This functions convert a transfer vector @p dvec with floating point
-	 * coordinates into a transfer vector @p ivec with integral coordinates and
-	 * vice versa.
-	 */
+  /**
+   * This functions convert a transfer vector @p dvec with floating point
+   * coordinates into a transfer vector @p ivec with integral coordinates and
+   * vice versa.
+   */
   /* @{ */
-	const point_int_type convert(const point_type& dvec) const
-	{
-		point_int_type ivec;
-		for (unsigned int d=0; d<DIM; ++d)
-			ivec[d] = std::floor(dvec[d]/diam + 0.5);
-		return ivec;
-	}
+  const point_int_type convert(const point_type& dvec) const
+  {
+    point_int_type ivec;
+    for (unsigned int d=0; d<DIM; ++d)
+      ivec[d] = std::floor(dvec[d]/diam + 0.5);
+    return ivec;
+  }
   /* @} */
   
   
   
   
-	/*! @return level index */
+  /*! @return level index */
   const unsigned int getNlevel() const
   { return nlevel; }
   
-	/*! @return if cluster is leaf or not */
+  /*! @return if cluster is leaf or not */
   const bool isLeaf() const
   { return is_leaf; }
   
-	/*! @return diameter of all clusters at current level */
-	const double getDiam() const
-	{	return diam;	}
+  /*! @return diameter of all clusters at current level */
+  const double getDiam() const
+  { return diam;  }
   
   
-	//! \name Control functions
-	/* @{ */
+  //! \name Control functions
+  /* @{ */
   const bool is_frequency_regime_set() const
-	{ return regime->is_frequency_regime_set(); }
+  { return regime->is_frequency_regime_set(); }
   const bool is_in_high_frequency_regime() const
-	{ return regime->is_in_high_frequency_regime(); }
-	/* @} */
+  { return regime->is_in_high_frequency_regime(); }
+  /* @} */
   
   
   
@@ -132,7 +132,7 @@ public:
     assert(!regime->is_frequency_regime_set());
     delete regime;
     regime = new High_Frequency_Regime<DIM>(diam, wavenum);
-  }	
+  } 
   
   void setLowFrequencyRegime()
   {
@@ -144,18 +144,18 @@ public:
   
 
 
-	//! @return unique id for a given relative position vector
-	const unsigned int getTransferId(const point_int_type& relpos) const
-	{
-		const unsigned int size = 2 << (nlevel-1);
-		unsigned int tid = 0;
-		unsigned int scale = 1;
-		for (unsigned int d=0; d<DIM; ++d) {
-			tid += (relpos[d] + size) * scale;
-			scale *= size;
-		}
-		return tid;
-	}
+  //! @return unique id for a given relative position vector
+  const unsigned int getTransferId(const point_int_type& relpos) const
+  {
+    const unsigned int size = 2 << (nlevel-1);
+    unsigned int tid = 0;
+    unsigned int scale = 1;
+    for (unsigned int d=0; d<DIM; ++d) {
+      tid += (relpos[d] + size) * scale;
+      scale *= size;
+    }
+    return tid;
+  }
 
   
 
@@ -171,30 +171,30 @@ public:
 
 
   
-	//! \name High frequency regime only
-	/* @{ */
+  //! \name High frequency regime only
+  /* @{ */
   const unsigned int getConeIdx(const point_type& direction) const
-	{
+  {
     return regime->getConeIdx(direction);
   }
   const unsigned int getNCones() const
-	{
+  {
     return regime->getNCones();
   }
   const point_type getConeDirection(const unsigned int c) const
-	{
+  {
     return regime->getConeDirection(c);
   }
-	void insert(const unsigned int c)
-	{
-		regime->insert(c);
-	}
-	const std::map<unsigned int,point_type>& getExistDirs() const
-	{
-		return regime->getExistDirs();
-	}
-	/* @} */
-	
+  void insert(const unsigned int c)
+  {
+    regime->insert(c);
+  }
+  const std::map<unsigned int,point_type>& getExistDirs() const
+  {
+    return regime->getExistDirs();
+  }
+  /* @} */
+  
 
 
 

@@ -64,20 +64,20 @@
   any tree level \b must either be in the low- or in the high-frequency
   regime.
 
-	@tparam DIM spatial dimension
+  @tparam DIM spatial dimension
  */
 template <int DIM>
 class Frequency_Regime
 {
 protected:
-	typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
 
 
 public:
   typedef boost::tuple<bool,unsigned int,point_type> admissibility_info;
 
 
-	virtual ~Frequency_Regime() {}
+  virtual ~Frequency_Regime() {}
 
 
   // set relation to other cluster
@@ -88,26 +88,26 @@ public:
    * \name Control functions
    */
   /* @{ */
-	virtual const bool is_frequency_regime_set() const
-	{	return false;	}
-	virtual const bool is_in_high_frequency_regime() const
-	{	throw std::runtime_error("is_high_freq: frequency regime not yet set!"); }
+  virtual const bool is_frequency_regime_set() const
+  { return false; }
+  virtual const bool is_in_high_frequency_regime() const
+  { throw std::runtime_error("is_high_freq: frequency regime not yet set!"); }
   /* @} */
-	
+  
 
-	//! \name High frequency regime only
-	/* @{ */
-	virtual const unsigned int getConeIdx(const point_type& direction) const
-	{	throw std::runtime_error("getConeIdx: not high frequency!"); }
-	virtual const unsigned int getNCones() const
-	{	throw std::runtime_error("getNCones: not high frequency!"); }
-	virtual const point_type getConeDirection(const unsigned int c) const
-	{	throw std::runtime_error("getConeDirection: not high frequency!"); }
-	virtual void insert(const unsigned int c)
-	{	throw std::runtime_error("insert: not high frequency!"); }
-	virtual const std::map<unsigned int,point_type>& getExistDirs() const
-	{	throw std::runtime_error("getExistDirs: not high frequency!"); }
-	/* @} */
+  //! \name High frequency regime only
+  /* @{ */
+  virtual const unsigned int getConeIdx(const point_type& direction) const
+  { throw std::runtime_error("getConeIdx: not high frequency!"); }
+  virtual const unsigned int getNCones() const
+  { throw std::runtime_error("getNCones: not high frequency!"); }
+  virtual const point_type getConeDirection(const unsigned int c) const
+  { throw std::runtime_error("getConeDirection: not high frequency!"); }
+  virtual void insert(const unsigned int c)
+  { throw std::runtime_error("insert: not high frequency!"); }
+  virtual const std::map<unsigned int,point_type>& getExistDirs() const
+  { throw std::runtime_error("getExistDirs: not high frequency!"); }
+  /* @} */
 
 
   virtual std::ostream& writeInfo(std::ostream &out) const
@@ -142,7 +142,7 @@ public:
  
   \brief Low-frequency functionalities for Level
  
-	@tparam DIM spatial dimension
+  @tparam DIM spatial dimension
  */
 template <int DIM>
 class Low_Frequency_Regime
@@ -157,9 +157,9 @@ class Low_Frequency_Regime
 
 
 public:
-	Low_Frequency_Regime(const double extension)
+  Low_Frequency_Regime(const double extension)
     : Frequency_Regime<DIM>()
-	{
+  {
 #if defined   LF_MIN_DISTANCE_1
     mindist = extension * 1.1 * sqrt(3);
 #elif defined LF_MIN_DISTANCE_2
@@ -167,24 +167,24 @@ public:
 #elif defined LF_MIN_DISTANCE_3
     mindist = 2. * extension * sqrt(2);
 #else
-		throw std::runtime_error("Frequency regime delimiter not defined!");
+    throw std::runtime_error("Frequency regime delimiter not defined!");
 #endif
-	}
+  }
 
   
   
-	//! \name Control functions
-	/* @{ */
+  //! \name Control functions
+  /* @{ */
   const bool is_frequency_regime_set() const
-	{
+  {
     return true;
   }
   
   const bool is_in_high_frequency_regime() const
-	{
+  {
     return false;
   }
-	/* @} */
+  /* @} */
 
 
   const admissibility_info getRelation(const point_type& transfer) const
@@ -192,7 +192,7 @@ public:
     const double dist = transfer.norm();
     const unsigned int c = 0;
     const point_type u(0.);
-		if (dist>mindist) return boost::make_tuple(true,  c, u);
+    if (dist>mindist) return boost::make_tuple(true,  c, u);
     else              return boost::make_tuple(false, c, u);
   }
 
@@ -231,38 +231,38 @@ public:
  
   \brief High-frequency functionalities for Level
 
-	@tparam DIM spatial dimension
+  @tparam DIM spatial dimension
  
  */
 template <int DIM>
 class High_Frequency_Regime
-	: public Frequency_Regime<DIM>,
+  : public Frequency_Regime<DIM>,
     private boost::noncopyable
 {
   // typedef
   typedef ConeFactory<DIM> cone_factory_type;
-	typedef typename Frequency_Regime<DIM>::point_type point_type;
+  typedef typename Frequency_Regime<DIM>::point_type point_type;
   typedef typename Frequency_Regime<DIM>::admissibility_info admissibility_info;
 
   
 
-	/**
-	 * The ConeFactory contains all cone informations for a given cluster level
-	 * and a give wavenumber.
-	 */
-	const cone_factory_type cf;
+  /**
+   * The ConeFactory contains all cone informations for a given cluster level
+   * and a give wavenumber.
+   */
+  const cone_factory_type cf;
 
   double mindist; //!< minimal admissible distance between two clusters
  
-	std::map<unsigned int,point_type> existDirs;
-	
+  std::map<unsigned int,point_type> existDirs;
+  
 
 public:
-	High_Frequency_Regime(const double extension,
+  High_Frequency_Regime(const double extension,
                         const double wavenum)
-		: Frequency_Regime<DIM>(),
-			cf(extension, wavenum)
-	{
+    : Frequency_Regime<DIM>(),
+      cf(extension, wavenum)
+  {
 #if defined   HF_MIN_DISTANCE_1
     const double mdlf = extension * 1.1 * sqrt(3);
 #elif defined   HF_MIN_DISTANCE_2
@@ -270,57 +270,57 @@ public:
 #elif defined   HF_MIN_DISTANCE_3
     const double mdlf = 2. * extension * sqrt(2);
 #else
-		throw std::runtime_error("Frequency regime delimiter not defined!");
+    throw std::runtime_error("Frequency regime delimiter not defined!");
 #endif
     const double mdhf = extension*extension * wavenum;
     mindist = ((mdhf>mdlf) ? mdhf : mdlf);
-	}
-	
+  }
+  
 
 
-	//! \name Control functions
-	/* @{ */
+  //! \name Control functions
+  /* @{ */
   const bool is_frequency_regime_set() const
-	{
+  {
     return true;
   }
   
   const bool is_in_high_frequency_regime() const
-	{
+  {
     return true;
   }
-	/* @} */
+  /* @} */
 
 
 
-	//! \name Informations about cones
-	/* @{ */
-	const unsigned int getNCones() const
-	{
-		return cf.getNCones();
-	}
-	const point_type getConeDirection(const unsigned int c) const
-	{
-		assert(c==cf.getConeIdx(cf.getConeDirection(c)));
-		return cf.getConeDirection(c);
-	}
-	const unsigned int getConeIdx(const point_type& direction) const
-	{
-		return cf.getConeIdx(direction);
-	}
-	/* @} */
+  //! \name Informations about cones
+  /* @{ */
+  const unsigned int getNCones() const
+  {
+    return cf.getNCones();
+  }
+  const point_type getConeDirection(const unsigned int c) const
+  {
+    assert(c==cf.getConeIdx(cf.getConeDirection(c)));
+    return cf.getConeDirection(c);
+  }
+  const unsigned int getConeIdx(const point_type& direction) const
+  {
+    return cf.getConeIdx(direction);
+  }
+  /* @} */
 
 
 
-	void insert(const unsigned int c)
-	{	
-		existDirs.insert(std::make_pair(c, cf.getConeDirection(c)));
-	}
-	
-	const std::map<unsigned int,point_type>& getExistDirs() const
-	{
-		return existDirs;
-	}
+  void insert(const unsigned int c)
+  { 
+    existDirs.insert(std::make_pair(c, cf.getConeDirection(c)));
+  }
+  
+  const std::map<unsigned int,point_type>& getExistDirs() const
+  {
+    return existDirs;
+  }
 
 
   const admissibility_info getRelation(const point_type& transfer) const
@@ -328,14 +328,14 @@ public:
     const double dist = transfer.norm();
     const unsigned int c = cf.getConeIdx(transfer);
     const point_type u = cf.getConeDirection(c); 
-		if (dist>mindist) return boost::make_tuple(true,  c, u);
+    if (dist>mindist) return boost::make_tuple(true,  c, u);
     else              return boost::make_tuple(false, c, u);
   }
 
   std::ostream& writeInfo(std::ostream &out = std::cout) const
   {
     out << mindist << "]," << std::setw(30) << "\t[ndirs,nilists,ni]:["
-				<< cf.getNCones();
+        << cf.getNCones();
     return out;
   }
 

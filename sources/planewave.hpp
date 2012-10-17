@@ -49,9 +49,9 @@ protected:
   explicit PlaneWaveBase(const double wavenum) : k(0., wavenum) {}
 
 public:
-	template <typename point_type>
+  template <typename point_type>
   T plane_wave(const point_type& point, const point_type& u) const
-	{	return exp(k * u.dotProduct(point)); } // 7 flops
+  { return exp(k * u.dotProduct(point)); } // 7 flops
 };
 
 
@@ -61,83 +61,83 @@ public:
 
 
 
-template <int DIM, int ORDER,	typename T>
+template <int DIM, int ORDER, typename T>
 class PlaneWave
-	: boost::noncopyable, public PlaneWaveBase<T>
+  : boost::noncopyable, public PlaneWaveBase<T>
 {
   enum {nboxes = DimTraits<DIM>::nboxes,
         nnodes = BasisTraits<ORDER,DIM>::nnodes};
 
   typedef Chebyshev< ORDER>  basis_type;
   typedef Tensor<DIM,ORDER> tensor_type; 
-	typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
 
 
   const T k; //!< laplace parameter
-	
-	std::vector<T*> pwaves;
+  
+  std::vector<T*> pwaves;
 
 public:
-	template <typename level_type>
-	explicit PlaneWave(const double wavenum, const level_type *const level)
-		: PlaneWaveBase<T>(wavenum)
-	{
-		assert(level->is_in_high_frequency_regime());
+  template <typename level_type>
+  explicit PlaneWave(const double wavenum, const level_type *const level)
+    : PlaneWaveBase<T>(wavenum)
+  {
+    assert(level->is_in_high_frequency_regime());
 
-		const unsigned int ncones = level->getNCones();
-		pwaves.resize(ncones, NULL);
-		for (unsigned int c=0; c<ncones; ++c) pwaves.at(c) = NULL;
+    const unsigned int ncones = level->getNCones();
+    pwaves.resize(ncones, NULL);
+    for (unsigned int c=0; c<ncones; ++c) pwaves.at(c) = NULL;
 
-		typedef std::map<unsigned int,point_type> direction_map;
-		const direction_map& existDirs = level->getExistDirs();
-		BOOST_FOREACH(const typename direction_map::value_type& dir, existDirs) {
+    typedef std::map<unsigned int,point_type> direction_map;
+    const direction_map& existDirs = level->getExistDirs();
+    BOOST_FOREACH(const typename direction_map::value_type& dir, existDirs) {
 
-			const unsigned int c = dir.first;
-			const point_type&  u = dir.second;
+      const unsigned int c = dir.first;
+      const point_type&  u = dir.second;
 
-			pwaves.at(c) = new T [(1+nboxes) * nnodes];
+      pwaves.at(c) = new T [(1+nboxes) * nnodes];
 
-			T *const ppw = pwaves.at(c);
-			T *const cpw = ppw + nnodes;
+      T *const ppw = pwaves.at(c);
+      T *const cpw = ppw + nnodes;
 
-			const double diam = level->getDiam();
+      const double diam = level->getDiam();
 
-			// parent cluster plane wave
-			
-			boost::array<point_type,nnodes> x; //!< parent cluster roots
-			map_loc_glob<DIM> map_l2g(point_type(0.), diam);
-			for (unsigned int n=0; n<nnodes; ++n) {
-				for (unsigned int d=0; d<DIM; ++d)
-					x[n][d] = map_l2g(d, basis_type::nodes[tensor_type::node_ids[n][d]]);
-				ppw[n] = plane_wave(x[n], u);
-			}
-			
-			// child cluster plane wave
-			for (unsigned int b=0; b<nboxes; ++b) {
-				// child center
-				point_type cc;
-				for (unsigned int d=0; d<DIM; ++d)
-					cc[d] = DimTraits<DIM>::child_pos[b][d] * (diam / 4.);
-				// child roots
-				for (unsigned int n=0; n<nnodes; ++n) {
-					const point_type cx = (x[n] / 2.) + cc;
-					cpw[b*nnodes + n] = plane_wave(cx, u);
-				}
-			}
-			
-		}
-		
-	}
+      // parent cluster plane wave
+      
+      boost::array<point_type,nnodes> x; //!< parent cluster roots
+      map_loc_glob<DIM> map_l2g(point_type(0.), diam);
+      for (unsigned int n=0; n<nnodes; ++n) {
+        for (unsigned int d=0; d<DIM; ++d)
+          x[n][d] = map_l2g(d, basis_type::nodes[tensor_type::node_ids[n][d]]);
+        ppw[n] = plane_wave(x[n], u);
+      }
+      
+      // child cluster plane wave
+      for (unsigned int b=0; b<nboxes; ++b) {
+        // child center
+        point_type cc;
+        for (unsigned int d=0; d<DIM; ++d)
+          cc[d] = DimTraits<DIM>::child_pos[b][d] * (diam / 4.);
+        // child roots
+        for (unsigned int n=0; n<nnodes; ++n) {
+          const point_type cx = (x[n] / 2.) + cc;
+          cpw[b*nnodes + n] = plane_wave(cx, u);
+        }
+      }
+      
+    }
+    
+  }
 
 
-	~PlaneWave()
-	{	BOOST_FOREACH(T *const pw, pwaves)	if (pw) delete [] pw;	}
+  ~PlaneWave()
+  { BOOST_FOREACH(T *const pw, pwaves)  if (pw) delete [] pw; }
 
-	const T *const getppw(const unsigned int c) const
-	{ return pwaves.at(c); }
+  const T *const getppw(const unsigned int c) const
+  { return pwaves.at(c); }
 
-	const T *const getcpw(const unsigned int c) const
-	{ return pwaves.at(c) + nnodes; }
+  const T *const getcpw(const unsigned int c) const
+  { return pwaves.at(c) + nnodes; }
 
 };
 
@@ -148,39 +148,39 @@ public:
 
 
 
-template <int DIM, int ORDER,	typename T,
-					typename particle_type>
+template <int DIM, int ORDER, typename T,
+          typename particle_type>
 class PlaneWaveParticles
-	: boost::noncopyable, public PlaneWaveBase<T>
+  : boost::noncopyable, public PlaneWaveBase<T>
 {
-	enum {nnodes = BasisTraits<ORDER,DIM>::nnodes};
-	typedef typename DimTraits<DIM>::point_type point_type;
+  enum {nnodes = BasisTraits<ORDER,DIM>::nnodes};
+  typedef typename DimTraits<DIM>::point_type point_type;
 
-	const particle_type *const particles;
-	const unsigned int  *const pindices;
+  const particle_type *const particles;
+  const unsigned int  *const pindices;
 
 
 public:
-	explicit PlaneWaveParticles(const double wavenum,
-															const particle_type *const _particles,
-															const unsigned int  *const _pindices)
-		: PlaneWaveBase<T>(wavenum),
-			particles(_particles),
-			pindices( _pindices)
-	{}
+  explicit PlaneWaveParticles(const double wavenum,
+                              const particle_type *const _particles,
+                              const unsigned int  *const _pindices)
+    : PlaneWaveBase<T>(wavenum),
+      particles(_particles),
+      pindices( _pindices)
+  {}
 
 
-	void setcpw(const Cluster<DIM> *const cl,	const point_type& u,
-							T *const cpw) const
-	{
-		assert(cl->isLeaf());
-		
-		const unsigned int nbeg = cl->getNbeg();
-		for (unsigned int n=0; n<cl->getSize(); ++n) {
-			const point_type& point = particles[pindices[nbeg+n]].getPoint();
-			cpw[n] = plane_wave(point, u);
-		}
-	}
+  void setcpw(const Cluster<DIM> *const cl, const point_type& u,
+              T *const cpw) const
+  {
+    assert(cl->isLeaf());
+    
+    const unsigned int nbeg = cl->getNbeg();
+    for (unsigned int n=0; n<cl->getSize(); ++n) {
+      const point_type& point = particles[pindices[nbeg+n]].getPoint();
+      cpw[n] = plane_wave(point, u);
+    }
+  }
 
 
 };

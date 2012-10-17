@@ -29,7 +29,7 @@
 
 template <int DIM>
 Storage<DIM>::Storage(const std::pair<point_type,point_type> bbx,
-											const unsigned int lmax)
+                      const unsigned int lmax)
 {
   // set root cluster //////////////////
   root_cluster_diam = 0.;
@@ -37,14 +37,14 @@ Storage<DIM>::Storage(const std::pair<point_type,point_type> bbx,
     if (root_cluster_diam < bbx.second[d]-bbx.first[d])
       root_cluster_diam   = bbx.second[d]-bbx.first[d];
   root_cluster_center = (bbx.first+bbx.second) / 2.;
-	
+  
   // set levels /////////////
   double diam = root_cluster_diam;
   for (unsigned int l=0; l<=lmax; ++l) {
     const bool is_leaf = (l == lmax ? true : false);
     levels.push_back(new level_type(l, diam, is_leaf));
     diam /= 2.;
-	}
+  }
 }
 
 

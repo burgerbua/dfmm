@@ -25,15 +25,15 @@
 #ifndef clusterbasis_hpp
 #define clusterbasis_hpp
 
-#include <boost/shared_array.hpp>	
+#include <boost/shared_array.hpp> 
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class ClusterBasis
-	
-	\brief Stores translation operators
+  \class ClusterBasis
+  
+  \brief Stores translation operators
 */
 template <int DIM, int ORDER, typename T>
 class ClusterBasis
@@ -67,7 +67,7 @@ public:
     return S.get();
   }
 
-	T *const getS()
+  T *const getS()
   {
     return S.get();
   }

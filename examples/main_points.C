@@ -42,30 +42,30 @@
 
 int main( int argc, char * argv[ ] )
 {
-	// start timer
-	const double t_0 = omp_get_wtime( );
+  // start timer
+  const double t_0 = omp_get_wtime( );
 
   const unsigned int dim = 3;  
-	
-	typedef DimTraits<dim>::point_type     point_type;
-	typedef DimTraits<dim>::point_int_type point_int_type;
+  
+  typedef DimTraits<dim>::point_type     point_type;
+  typedef DimTraits<dim>::point_int_type point_int_type;
 
-	point_type p1(2.,1.,2.);
-	point_type p2(2.,1.,2.);
+  point_type p1(2.,1.,2.);
+  point_type p2(2.,1.,2.);
 
-	std::cout << "p1 = " << p1 << std::endl;
-	std::cout << "p2 = " << p2 << std::endl;
+  std::cout << "p1 = " << p1 << std::endl;
+  std::cout << "p2 = " << p2 << std::endl;
 
-	std::cout << "norm(p1) = " << p1.norm() << std::endl;
-	std::cout << "p1.distance(p2) = " << p1.distance(p2) << std::endl;
+  std::cout << "norm(p1) = " << p1.norm() << std::endl;
+  std::cout << "p1.distance(p2) = " << p1.distance(p2) << std::endl;
 
-	std::cout << "p1==p2 = " << (p1==p2) << std::endl;
+  std::cout << "p1==p2 = " << (p1==p2) << std::endl;
 
-	////////////////////////////////////////////////////
-	std::cout << "\n- Overall time " << omp_get_wtime( ) - t_0
+  ////////////////////////////////////////////////////
+  std::cout << "\n- Overall time " << omp_get_wtime( ) - t_0
             << " s" << std::endl;
-	////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////
 
 
-	return 0;
-} 	
+  return 0;
+}   

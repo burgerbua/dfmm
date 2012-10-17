@@ -93,7 +93,7 @@ class Tensor
 {
   enum {nnodes = BasisTraits<ORDER,DIM>::nnodes};
   typedef boost::array<unsigned int[DIM],nnodes> node_id_array;
-	typedef double weights_array[nnodes];
+  typedef double weights_array[nnodes];
 
   static const node_id_array getBasisNodeIds()
   {
@@ -114,29 +114,29 @@ public:
 
 
 
-	/*!  Sets the roots of the Chebyshev quadrature weights defined as \f$w_i =
-	  \frac{\pi}{\ell}\sqrt{1-\bar x_i^2}\f$ with the Chebyshev roots \f$\bar
-	  x\f$.
-	 
-	  @param weights[out] the root of the weights \f$\sqrt{w_i}\f$
-	 */
-	static void setRootOfWeights(double weights[nnodes])
-	{
-		// weights in 1 dimension
-		typedef Chebyshev<ORDER> Cheb;
-		const double fracPiORDER = boost::math::constants::pi<double>() / ORDER;
-		double weights1D[ORDER];
-		for (unsigned int o=0; o<ORDER; ++o)
-			weights1D[o] = fracPiORDER * sqrt(1.-Cheb::nodes[o]*Cheb::nodes[o]);
-		
-		// weights in DIM dimensions (tensor structure)
-		for (unsigned int n=0; n<nnodes; ++n) {
-			const unsigned int *const node_id = node_ids[n];
-			double w = 1.;
-			for (unsigned int d=0; d<DIM; ++d) w *= weights1D[d];
-			weights[n] = sqrt(w);
-		}
-	}
+  /*!  Sets the roots of the Chebyshev quadrature weights defined as \f$w_i =
+    \frac{\pi}{\ell}\sqrt{1-\bar x_i^2}\f$ with the Chebyshev roots \f$\bar
+    x\f$.
+   
+    @param weights[out] the root of the weights \f$\sqrt{w_i}\f$
+   */
+  static void setRootOfWeights(double weights[nnodes])
+  {
+    // weights in 1 dimension
+    typedef Chebyshev<ORDER> Cheb;
+    const double fracPiORDER = boost::math::constants::pi<double>() / ORDER;
+    double weights1D[ORDER];
+    for (unsigned int o=0; o<ORDER; ++o)
+      weights1D[o] = fracPiORDER * sqrt(1.-Cheb::nodes[o]*Cheb::nodes[o]);
+    
+    // weights in DIM dimensions (tensor structure)
+    for (unsigned int n=0; n<nnodes; ++n) {
+      const unsigned int *const node_id = node_ids[n];
+      double w = 1.;
+      for (unsigned int d=0; d<DIM; ++d) w *= weights1D[d];
+      weights[n] = sqrt(w);
+    }
+  }
 
 
 };

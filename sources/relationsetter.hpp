@@ -31,14 +31,14 @@
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class RelationSetter
-	
-	\brief Abstract base class for relation-setter classes
+  \class RelationSetter
+  
+  \brief Abstract base class for relation-setter classes
 */
 template <typename cluster_type,
-					typename level_type,
+          typename level_type,
           typename expansionhandler_type,
           typename relations_type,
           typename m2lhandler_type>
@@ -58,10 +58,10 @@ class RelationSetter
   std::vector<expansionhandler_type>& rexph;
   std::vector<expansionhandler_type>& cexph;
 
-	const std::vector<level_type*>& levels;
+  const std::vector<level_type*>& levels;
 
   m2lhandler_type& m2l;
-	
+  
 
   value_type *const alloc(const cluster_type *const cl,
                           const unsigned int c,
@@ -70,11 +70,11 @@ class RelationSetter
   {
     // allocate expansion
     point_type uu(0.);
-		level_type *const level = levels.at(cl->getNlevel());
+    level_type *const level = levels.at(cl->getNlevel());
     if (level->is_in_high_frequency_regime()) {
-			uu = level->getConeDirection(c);
-			level->insert(c); // cone c exists, insert it
-		}
+      uu = level->getConeDirection(c);
+      level->insert(c); // cone c exists, insert it
+    }
     expansion_map_flag expansion = exph.at(cl->getCidx()).insert(c, uu);
 
     // if direction not yet inserted and cluster is no leaf and cluster is in
@@ -85,7 +85,7 @@ class RelationSetter
         assert(!expansion.first->second->getcvals(b));
         if (ccl) {
           unsigned int cc = 0;
-					const level_type *const clevel = levels.at(ccl->getNlevel());
+          const level_type *const clevel = levels.at(ccl->getNlevel());
           if (clevel->is_in_high_frequency_regime())
             cc = clevel->getConeIdx(u);
           expansion.first->second->setcvals(b, alloc(ccl, cc, u, exph));
@@ -102,21 +102,21 @@ protected:
 
 
   explicit RelationSetter(std::vector<expansionhandler_type>& _rexph,
-													std::vector<expansionhandler_type>& _cexph,
-													std::vector<relations_type>& _relations,
-													const std::vector<level_type*>& _levels,
-													m2lhandler_type& _m2l)
+                          std::vector<expansionhandler_type>& _cexph,
+                          std::vector<relations_type>& _relations,
+                          const std::vector<level_type*>& _levels,
+                          m2lhandler_type& _m2l)
     : rexph(_rexph),
-			cexph(_cexph),
-			levels(_levels),
-			m2l(_m2l),
-			relations(_relations)
-	{}
+      cexph(_cexph),
+      levels(_levels),
+      m2l(_m2l),
+      relations(_relations)
+  {}
 
   virtual void operator()(const cluster_type *const cl) = 0;
 
   void setRelation(const cluster_type *const clx, 
-									 const cluster_type *const cly)
+                   const cluster_type *const cly)
   {
     typedef boost::tuple<bool,unsigned int,point_type> admissibility_info;
     
@@ -135,7 +135,7 @@ protected:
     if (admissible) {
       const unsigned int c = boost::get<1>(info);
       // insert unique transfer vector
-      const unsigned int t_id	= m2l.addTransferVector(clx, cly, c);
+      const unsigned int t_id = m2l.addTransferVector(clx, cly, c);
       // insert interaction
       rl.push_back_interaction(cly, t_id, c);
       // recursively insert directional expansions
@@ -154,14 +154,14 @@ protected:
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class RelationSetterCousins
-	
-	\brief Checks relation between cousins (parents neighbors)
+  \class RelationSetterCousins
+  
+  \brief Checks relation between cousins (parents neighbors)
 */
 template <typename cluster_type,
-					typename level_type,
+          typename level_type,
           typename expansionhandler_type,
           typename relations_type,
           typename m2lhandler_type>
@@ -170,17 +170,17 @@ class RelationSetterCousins
                    relations_type,m2lhandler_type>
 {
   using RelationSetter<cluster_type,level_type,expansionhandler_type,
-											 relations_type,m2lhandler_type>::relations;
+                       relations_type,m2lhandler_type>::relations;
 
 public:
   RelationSetterCousins(std::vector<expansionhandler_type>& rexph,
                         std::vector<expansionhandler_type>& cexph,
                         std::vector<relations_type>& relations,
-												const std::vector<level_type*>& levels,
+                        const std::vector<level_type*>& levels,
                         m2lhandler_type& m2l)
     : RelationSetter<cluster_type,level_type,expansionhandler_type,
-										 relations_type,m2lhandler_type>
-			(rexph, cexph, relations, levels, m2l)
+                     relations_type,m2lhandler_type>
+      (rexph, cexph, relations, levels, m2l)
   {}
 
   void operator()(const cluster_type *const clx)
@@ -189,10 +189,10 @@ public:
     // interactions
     BOOST_FOREACH(const cluster_type *const clY,
                   relations.at(clx->getParent()->getCidx()).getNeighbors()) {
-			for (unsigned int b=0; b<cluster_type::nboxes; ++b) {
-				const cluster_type *const cly = clY->getChild(b);
+      for (unsigned int b=0; b<cluster_type::nboxes; ++b) {
+        const cluster_type *const cly = clY->getChild(b);
         if (cly) setRelation(clx, cly);
-			}
+      }
     }
   }
 };
@@ -200,16 +200,16 @@ public:
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class RelationSetterPeers
-	
-	\brief Checks relation between peers (clusters of same level)
+  \class RelationSetterPeers
+  
+  \brief Checks relation between peers (clusters of same level)
 
-	\warning Not tested for a long time
+  \warning Not tested for a long time
 */
 template <typename cluster_type,
-					typename level_type,
+          typename level_type,
           typename expansionhandler_type,
           typename relations_type,
           typename m2lhandler_type>
@@ -221,14 +221,14 @@ class RelationSetterPeers
   
 public:
   explicit RelationSetterPeers(std::vector<expansionhandler_type>& rexph,
-															 std::vector<expansionhandler_type>& cexph,
-															 std::vector<relations_type>& relations,
-															 const std::vector<level_type*>& levels,
-															 m2lhandler_type& m2l,
-															 const std::vector<cluster_type*>& _pr)
+                               std::vector<expansionhandler_type>& cexph,
+                               std::vector<relations_type>& relations,
+                               const std::vector<level_type*>& levels,
+                               m2lhandler_type& m2l,
+                               const std::vector<cluster_type*>& _pr)
     : RelationSetter<cluster_type,level_type,expansionhandler_type,
-										 relations_type,m2lhandler_type>
-			(rexph, cexph, relations, levels, m2l), pr(_pr)
+                     relations_type,m2lhandler_type>
+      (rexph, cexph, relations, levels, m2l), pr(_pr)
   {}
 
   void operator()(const cluster_type *const clx)
@@ -252,10 +252,10 @@ public:
 //////////////////////////////////////////////////////////////////////
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 */
 template <typename cluster_type,
-					typename level_type,
+          typename level_type,
           typename expansionhandler_type,
           typename relations_type,
           typename m2lhandler_type>
@@ -270,8 +270,8 @@ void SetupClusterRelations
 {
   // setup multilevel relations
   typedef RelationSetterCousins<cluster_type,level_type,expansionhandler_type,
-																relations_type,m2lhandler_type>
-		cousin_relation_setter;
+                                relations_type,m2lhandler_type>
+    cousin_relation_setter;
 
   assert(rclvv.front().size() == 1);
   assert(cclvv.front().size() == 1);
@@ -283,13 +283,6 @@ void SetupClusterRelations
     std::for_each(rclvv.at(l).begin(), rclvv.at(l).end(),
                   cousin_relation_setter(rexph, cexph,
                                          relations, levels, m2lv.at(l)));
-
-//  // setup single level relations
-//  typedef RelationSetterPeers<cluster_type,expansionhandler_type,relations_type,
-//                              m2lhandler_type> peer_relation_setter;
-//  std::for_each(clvv.back().begin(),
-//                clvv.back().end(),
-//                peer_relation_setter(m2lv.back(), clvv.back()));
 }
 
 

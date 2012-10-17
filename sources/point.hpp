@@ -37,28 +37,28 @@
 
 
 /*! /class Point\
-	Geometric point whose dimension and type of coordinates is given by template
-	parameters T and DIM.
+  Geometric point whose dimension and type of coordinates is given by template
+  parameters T and DIM.
 
-	\brief point class 
+  \brief point class 
 
-	@tparam T value type of coordinates
-	@tparam DIM spatial dimension
+  @tparam T value type of coordinates
+  @tparam DIM spatial dimension
  */
 template<typename T, int DIM>
 class Point
 {
-	template <typename U>
-	friend std::ostream& operator << (std::ostream& output,
-																		const Point<U,DIM>& p);
+  template <typename U>
+  friend std::ostream& operator << (std::ostream& output,
+                                    const Point<U,DIM>& p);
 
 public:
 
   typedef T value_type;                  
-	static const unsigned int dim = DIM;
+  static const unsigned int dim = DIM;
 
-	explicit Point()
-	{ for (unsigned int d=0; d<dim; ++d) coords[d] = value_type(0.); }
+  explicit Point()
+  { for (unsigned int d=0; d<dim; ++d) coords[d] = value_type(0.); }
 
   explicit Point(const value_type _coord)
   { for(unsigned int d=0; d<dim; ++d) coords[d] = _coord; }
@@ -94,7 +94,7 @@ public:
   }
 
 
-	bool operator == (const Point& other) const;
+  bool operator == (const Point& other) const;
 
 
 
@@ -235,7 +235,7 @@ public:
 
 
 
-	
+  
 
 
 private:
@@ -267,85 +267,85 @@ Point<int,3>::Point(const int x, const int y, const int z)
 template<> inline
 double Point<double,2>::distance(const Point& other) const
 {
-	const double diff0 = coords[0] - other.coords[0];
-	const double diff1 = coords[1] - other.coords[1];
-	return sqrt(diff0*diff0 + diff1*diff1);
+  const double diff0 = coords[0] - other.coords[0];
+  const double diff1 = coords[1] - other.coords[1];
+  return sqrt(diff0*diff0 + diff1*diff1);
 }
 template<> inline
 double Point<double,3>::distance(const Point& other) const
 {
-	const double diff0 = coords[0] - other.coords[0];
-	const double diff1 = coords[1] - other.coords[1];
-	const double diff2 = coords[2] - other.coords[2];
-	return sqrt(diff0*diff0 + diff1*diff1 + diff2*diff2);
+  const double diff0 = coords[0] - other.coords[0];
+  const double diff1 = coords[1] - other.coords[1];
+  const double diff2 = coords[2] - other.coords[2];
+  return sqrt(diff0*diff0 + diff1*diff1 + diff2*diff2);
 }
 
 // norm
 template<> inline
 double Point<double,2>::norm() const
 {
-	const double n0 = fabs(coords[0]);
-	const double n1 = fabs(coords[1]);
-	return sqrt(n0*n0 + n1*n1);
+  const double n0 = fabs(coords[0]);
+  const double n1 = fabs(coords[1]);
+  return sqrt(n0*n0 + n1*n1);
 }
 template<> inline
 double Point<double,3>::norm() const
 {
-	const double n0 = fabs(coords[0]);
-	const double n1 = fabs(coords[1]);
-	const double n2 = fabs(coords[2]);
-	return sqrt(n0*n0 + n1*n1 + n2*n2);
+  const double n0 = fabs(coords[0]);
+  const double n1 = fabs(coords[1]);
+  const double n2 = fabs(coords[2]);
+  return sqrt(n0*n0 + n1*n1 + n2*n2);
 }
 
 // dot product
 template <> inline
 double Point<double,2>::dotProduct(const Point& other) const
 {
-	const double d0 = coords[0] * other.coords[0];
-	const double d1 = coords[1] * other.coords[1];
-	return d0 + d1;
+  const double d0 = coords[0] * other.coords[0];
+  const double d1 = coords[1] * other.coords[1];
+  return d0 + d1;
 }
 template <> inline
 double Point<double,3>::dotProduct(const Point& other) const
 {
-	const double d0 = coords[0] * other.coords[0];
-	const double d1 = coords[1] * other.coords[1];
-	const double d2 = coords[2] * other.coords[2];
-	return d0 + d1 + d2;
+  const double d0 = coords[0] * other.coords[0];
+  const double d1 = coords[1] * other.coords[1];
+  const double d2 = coords[2] * other.coords[2];
+  return d0 + d1 + d2;
 }
 
 // equal operator
 template<> inline
 bool Point<double,2>::operator == (const Point& other) const
 {
-	return (fabs(coords[0]-other.coords[0]) < 
-					std::numeric_limits<double>::epsilon() &&
-					fabs(coords[1]-other.coords[1]) <
-					std::numeric_limits<double>::epsilon());
+  return (fabs(coords[0]-other.coords[0]) < 
+          std::numeric_limits<double>::epsilon() &&
+          fabs(coords[1]-other.coords[1]) <
+          std::numeric_limits<double>::epsilon());
 }
 template<> inline
 bool Point<double,3>::operator == (const Point& other) const
 {
-	return (fabs(coords[0]-other.coords[0]) <
-					std::numeric_limits<double>::epsilon() &&
-					fabs(coords[1]-other.coords[1]) <
-					std::numeric_limits<double>::epsilon() &&
-					fabs(coords[2]-other.coords[2]) <
-					std::numeric_limits<double>::epsilon());
+  return (fabs(coords[0]-other.coords[0]) <
+          std::numeric_limits<double>::epsilon() &&
+          fabs(coords[1]-other.coords[1]) <
+          std::numeric_limits<double>::epsilon() &&
+          fabs(coords[2]-other.coords[2]) <
+          std::numeric_limits<double>::epsilon());
 }
 
 template<> inline
 bool Point<int,2>::operator == (const Point& other) const
 {
-	return (coords[0] == other.coords[0] &&
-					coords[1] == other.coords[1]);
+  return (coords[0] == other.coords[0] &&
+          coords[1] == other.coords[1]);
 }
 template<> inline
 bool Point<int,3>::operator == (const Point& other) const
 {
-	return (coords[0] == other.coords[0] &&
-					coords[1] == other.coords[1] &&
-					coords[2] == other.coords[2]);
+  return (coords[0] == other.coords[0] &&
+          coords[1] == other.coords[1] &&
+          coords[2] == other.coords[2]);
 }
 
 
@@ -353,15 +353,15 @@ bool Point<int,3>::operator == (const Point& other) const
 template <typename T>
 std::ostream& operator << (std::ostream& output, const Point<T,2>& p)
 {
-	output << "(" <<  p.coords[0] << "," << p.coords[1] << ")";
-	return output;
+  output << "(" <<  p.coords[0] << "," << p.coords[1] << ")";
+  return output;
 }
 template <typename T>
 std::ostream& operator << (std::ostream& output, const Point<T,3>& p)
 {
-	output << "(" <<  p.coords[0] << "," << p.coords[1] << "," << p.coords[2]
-				 << ")";
-	return output;
+  output << "(" <<  p.coords[0] << "," << p.coords[1] << "," << p.coords[2]
+         << ")";
+  return output;
 }
 
 

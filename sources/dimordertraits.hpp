@@ -31,18 +31,18 @@
 
 
 /*! 
-	\defgroup mtraits Traits classes: compile-time constants and types
+  \defgroup mtraits Traits classes: compile-time constants and types
  */
 
 
 
 
 /*! \class DimTraits
-	Compile time constants and data types depending on the spatial dimension
+  Compile time constants and data types depending on the spatial dimension
 
-	\ingroup mtraits
-	
-	@tparam DIM spatial dimension
+  \ingroup mtraits
+  
+  @tparam DIM spatial dimension
  */
 template <int DIM> struct DimTraits;
 
@@ -93,13 +93,13 @@ const int DimTraits<3>::child_pos[][3] = { { 1,  1,  1},
 
 
 /*! \class BasisTraits
-	Compile time contants depending on the interpolation basis and spatial
-	dimension
+  Compile time contants depending on the interpolation basis and spatial
+  dimension
 
-	\ingroup mtraits
-	
-	@tparam ORDER interpolation order
-	@tparam DIM spatial dimension
+  \ingroup mtraits
+  
+  @tparam ORDER interpolation order
+  @tparam DIM spatial dimension
  */
 /* @{ */
 template <int ORDER, int DIM> struct BasisTraits;
@@ -107,19 +107,19 @@ template <int ORDER, int DIM> struct BasisTraits;
 // 1D
 template <int ORDER> struct BasisTraits<ORDER, 1>
 {
-	enum {nnodes = ORDER};
+  enum {nnodes = ORDER};
 };
 
 // 2D
 template <int ORDER> struct BasisTraits<ORDER, 2>
 {
-	enum {nnodes = ORDER*ORDER};
+  enum {nnodes = ORDER*ORDER};
 };
 
 // 3D
 template <int ORDER> struct BasisTraits<ORDER, 3>
 {
-	enum {nnodes = ORDER*ORDER*ORDER};
+  enum {nnodes = ORDER*ORDER*ORDER};
 };
 /* @} */
 #endif

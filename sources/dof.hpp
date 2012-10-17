@@ -31,32 +31,32 @@
 #include "sources/dimordertraits.hpp"
 
 /*! \class Dof
-	Stands for degree of freedom (represents particles) and provides their
-	geometric location and identification
+  Stands for degree of freedom (represents particles) and provides their
+  geometric location and identification
 
-	\brief degree of freedom (particles), stores location and its id
+  \brief degree of freedom (particles), stores location and its id
  */
 template <int DIM>
 class Dof
 {
 public:
-	static const unsigned int dim = DIM;
+  static const unsigned int dim = DIM;
   typedef typename DimTraits<DIM>::point_type point_type;
 
-	explicit Dof() : x(point_type()), id(-1) {}
-	explicit Dof(const point_type _x)	: x(_x), id(-1)	{}
-	explicit Dof(const point_type _x, const unsigned int _id) : x(_x), id(_id) {}
+  explicit Dof() : x(point_type()), id(-1) {}
+  explicit Dof(const point_type _x) : x(_x), id(-1) {}
+  explicit Dof(const point_type _x, const unsigned int _id) : x(_x), id(_id) {}
   
-	double getCoordinate(unsigned int i) const
-	{	return x[i]; }
+  double getCoordinate(unsigned int i) const
+  { return x[i]; }
 
-	const point_type& getPoint() const
-	{	return x;	}
+  const point_type& getPoint() const
+  { return x; }
 
-	unsigned int getId() const
-	{ assert(id != -1); return id; }
+  unsigned int getId() const
+  { assert(id != -1); return id; }
 
-	std::ostream& writeInfo(std::ostream &out = std::cout) const
+  std::ostream& writeInfo(std::ostream &out = std::cout) const
   {
     out << x << std::endl;
     return out;
@@ -64,8 +64,8 @@ public:
 
 
 private:
-	point_type x;
-	unsigned int id;
+  point_type x;
+  unsigned int id;
 };
 
 

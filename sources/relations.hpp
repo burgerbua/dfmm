@@ -36,12 +36,12 @@ class Relations
   template <int,int,typename,typename> friend class M2Lapplyer;
 
   typedef Cluster<DIM>                                cluster_type;
-	typedef std::vector<const cluster_type*>            cluster_vector;
+  typedef std::vector<const cluster_type*>            cluster_vector;
   typedef std::pair<unsigned int,const cluster_type*> cluster_pair;
   typedef std::vector<cluster_pair>                   cluster_pair_vector;
   typedef std::map<unsigned int,cluster_pair_vector>  cluster_pair_vector_map;
 
-	cluster_vector             neighbor_list;
+  cluster_vector             neighbor_list;
   cluster_pair_vector_map interaction_lists;
 
 public:

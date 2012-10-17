@@ -42,11 +42,11 @@ Cluster<DIM>::Cluster(const unsigned int root_ndofs,
     nend(root_ndofs),
     size(nend-nbeg),
     center(root_center),
-		pos(0),
-		nlevel(0),
-		is_leaf(false)
+    pos(0),
+    nlevel(0),
+    is_leaf(false)
 {
-	for (unsigned int c=0; c<nboxes; ++c) child_list[c] = NULL;
+  for (unsigned int c=0; c<nboxes; ++c) child_list[c] = NULL;
 }
 
 
@@ -61,22 +61,22 @@ Cluster<DIM>::Cluster(Cluster*             _parent,
                       const unsigned int   _nbeg,
                       const unsigned int   _nend,
                       const point_type     _center,
-											const point_int_type _pos,
-											const unsigned int   _nlevel,
-											const bool           _is_leaf)
+                      const point_int_type _pos,
+                      const unsigned int   _nlevel,
+                      const bool           _is_leaf)
   : parent(_parent),
     cidx(  _cidx),
-		bidx(  _bidx),
+    bidx(  _bidx),
     lidx(  _lidx),
     nbeg(  _nbeg),
     nend(  _nend),
     size(nend-nbeg),
-		center(_center),
-		pos( _pos),
-		nlevel(_nlevel),
-		is_leaf(_is_leaf)
+    center(_center),
+    pos( _pos),
+    nlevel(_nlevel),
+    is_leaf(_is_leaf)
 {
-	for (unsigned int c=0; c<nboxes; ++c) child_list[c] = NULL;
+  for (unsigned int c=0; c<nboxes; ++c) child_list[c] = NULL;
 }
 
 
@@ -106,8 +106,8 @@ template <int DIM>
 static
 const typename DimTraits<DIM>::point_type
 updateCenter(const typename DimTraits<DIM>::point_type& pos,
-						 const double diam,
-						 const unsigned int b)
+             const double diam,
+             const unsigned int b)
 {
   typename DimTraits<DIM>::point_type cpos;
   for (unsigned int d=0; d<DIM; ++d)
@@ -121,12 +121,12 @@ template <int DIM>
 static
 const typename DimTraits<DIM>::point_int_type
 updatePosition(const typename DimTraits<DIM>::point_int_type& pos,
-						const unsigned int b)
+            const unsigned int b)
 {
   typename DimTraits<DIM>::point_int_type cpos;
   for (unsigned int d=0; d<DIM; ++d)
     cpos[d]
-			= 2 * pos[d] + (DimTraits<DIM>::child_pos[b][d]==1 ? 1 : 0);
+      = 2 * pos[d] + (DimTraits<DIM>::child_pos[b][d]==1 ? 1 : 0);
   return cpos;
 }
 
@@ -151,7 +151,7 @@ void Cluster<DIM>::subdivide
  unsigned int& cluster_counter)
 {
   const point_type& center   = cl->getCenter();
-	const point_int_type& pos  = cl->getPosition();
+  const point_int_type& pos  = cl->getPosition();
   const unsigned int nbeg    = cl->getNbeg();
   const unsigned int nend    = cl->getNend();
   const unsigned int size    = cl->getSize();
@@ -169,12 +169,12 @@ void Cluster<DIM>::subdivide
 
   // assign particles to respective child box
   for (unsigned int p=nbeg; p<nend; ++p) {
-		const particle_type& particle = particles[pindices[p]];
+    const particle_type& particle = particles[pindices[p]];
     const unsigned int b = getBoxIdx<DIM>(particle.getPoint() - center);
     boxes[b][ndofs_per_box[b]++] = particle.getId();
   }
 
-	//////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////
   // create and subdivide child boxes
   unsigned int dof_counter = 0;
   unsigned int box_counter = 0;
@@ -194,11 +194,11 @@ void Cluster<DIM>::subdivide
       const point_type ccenter
         = updateCenter<DIM>(center, diam/4, box_counter);
       
-			// get child position
-			const point_int_type cpos
-				= updatePosition<DIM>(pos, box_counter);
+      // get child position
+      const point_int_type cpos
+        = updatePosition<DIM>(pos, box_counter);
 
-			const bool is_leaf = (cnlevel<lmax) ? false : true;
+      const bool is_leaf = (cnlevel<lmax) ? false : true;
 
       // create child
       child = new Cluster(cl,
@@ -208,17 +208,17 @@ void Cluster<DIM>::subdivide
                           nbeg + dof_counter - ndofs_per_box[box_counter],
                           nbeg + dof_counter,
                           ccenter,
-													cpos,
+                          cpos,
                           cnlevel,
-													is_leaf);
+                          is_leaf);
 
-			// push child into vector of its level (stores clusters sequentially)
+      // push child into vector of its level (stores clusters sequentially)
       clvv.at(cnlevel).push_back(child);
-			
+      
       // subdivide child box if not yet leaf
       if (!is_leaf)
         subdivide(levels, clvv, child, particles, pindices,
-									lmax, cluster_counter);
+                  lmax, cluster_counter);
     }
     
     delete [] boxes[box_counter++];

@@ -37,7 +37,7 @@ template <int DIM>
 class Mapping
   : boost::noncopyable
 {
-	typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
 
 private:
   void setBoundingBox(const point_type& center,
@@ -88,17 +88,17 @@ template <int DIM>
 class map_glob_loc
   : public Mapping<DIM>
 {
-	typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
 
   using Mapping<DIM>::a;
   using Mapping<DIM>::b;
 
 public:
   explicit map_glob_loc()
-		: Mapping<DIM>() {}
+    : Mapping<DIM>() {}
   explicit map_glob_loc(const point_type& center,
                         const double diam)
-		: Mapping<DIM>(center, diam) {}
+    : Mapping<DIM>(center, diam) {}
   
   const double operator()(const int d, const double x) const
   { return (2*x - b[d] - a[d]) / (b[d] - a[d]); }
@@ -115,17 +115,17 @@ template <int DIM>
 class map_loc_glob
   : public Mapping<DIM>
 {
-	typedef typename DimTraits<DIM>::point_type point_type;
+  typedef typename DimTraits<DIM>::point_type point_type;
 
   using Mapping<DIM>::a;
   using Mapping<DIM>::b;
 
 public:
   explicit map_loc_glob()
-		: Mapping<DIM>() {}
+    : Mapping<DIM>() {}
   explicit map_loc_glob(const point_type& center,
                         const double diam)
-		: Mapping<DIM>(center, diam) {}
+    : Mapping<DIM>(center, diam) {}
   
   const double operator()(const int d, const double x) const
   { return (a[d] + b[d]) / 2. + (b[d] - a[d]) * x / 2.; }

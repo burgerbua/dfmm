@@ -50,14 +50,14 @@ kernel functions), respectively, in \f$\mathcal{O}(N\log N)\f$ (class of
 matrices based on oscillatory kernel functions) operations. Moreover, it
 offers
 <ol>
-	<li> Support for two and three space dimensions (given at compile-time as
-	DIM (template parameter)).
+  <li> Support for two and three space dimensions (given at compile-time as
+  DIM (template parameter)).
 
-	<li> Different accuracies (given at compile time as interpolation order
-	\f$\ell\f$ (ORDER - template parameter) and at run-time by the accuracy of
-	the low-rank approximation of the M2L kernels a \f$\varepsilon\f$ (eps))
-		
-	<li> <strong>TO CONTINUE ...</strong>
+  <li> Different accuracies (given at compile time as interpolation order
+  \f$\ell\f$ (ORDER - template parameter) and at run-time by the accuracy of
+  the low-rank approximation of the M2L kernels a \f$\varepsilon\f$ (eps))
+    
+  <li> <strong>TO CONTINUE ...</strong>
 
 </ol>
 

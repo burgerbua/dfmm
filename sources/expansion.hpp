@@ -30,25 +30,25 @@
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class Expansion
-	
-	\brief Stores multipole and local expansions
+  \class Expansion
+  
+  \brief Stores multipole and local expansions
 */
 template <int DIM, int ORDER, typename T>
 class Expansion
 {
 
-	static const unsigned int FAC = 2;
+  static const unsigned int FAC = 2;
 
-	// typedefs and compile time constants
+  // typedefs and compile time constants
   enum {nboxes = DimTraits<DIM>::nboxes,
         nnodes = BasisTraits<ORDER,DIM>::nnodes};
   typedef T value_type;
   typedef typename DimTraits<DIM>::point_type point_type;
 
-	// members
+  // members
   const point_type u;
   value_type *const vals;
   boost::array<value_type*,nboxes> cvals;
@@ -58,29 +58,29 @@ public:
   explicit Expansion(const point_type& _u)
     : u(_u), vals(new value_type [FAC*nnodes])
   {
-		this->zero();
+    this->zero();
     for (unsigned int b=0; b<nboxes; ++b) cvals.at(b) = NULL;
   }
   
   ~Expansion()
   { delete [] vals; }
 
-	void zero()
-	{	blas::setzero(FAC*nnodes, vals); }
+  void zero()
+  { blas::setzero(FAC*nnodes, vals); }
 
-	void setcvals(const unsigned int b, value_type *const cval)
-	{ cvals.at(b) = cval; }
+  void setcvals(const unsigned int b, value_type *const cval)
+  { cvals.at(b) = cval; }
 
-	const point_type& getu() const
-	{ return u; }
-	const value_type *const getvals() const
-	{ return vals; }
-	value_type *const getvals()
-	{ return vals; }
-	const value_type *const getcvals(const unsigned int b) const
-	{ return cvals.at(b); }
-	value_type *const getcvals(const unsigned int b)
-	{ return cvals.at(b); }
+  const point_type& getu() const
+  { return u; }
+  const value_type *const getvals() const
+  { return vals; }
+  value_type *const getvals()
+  { return vals; }
+  const value_type *const getcvals(const unsigned int b) const
+  { return cvals.at(b); }
+  value_type *const getcvals(const unsigned int b)
+  { return cvals.at(b); }
 
 };
 
@@ -91,11 +91,11 @@ public:
 
 
 /*!
-	\ingroup mcluster
+  \ingroup mcluster
 
-	\class ExpansionHandler
-	
-	\brief Handles multipole and local expansions of a cluster for all directions
+  \class ExpansionHandler
+  
+  \brief Handles multipole and local expansions of a cluster for all directions
 */
 template <int DIM, int ORDER, typename T>
 class ExpansionHandler
@@ -103,11 +103,11 @@ class ExpansionHandler
   typedef typename DimTraits<DIM>::point_type point_type;
 
 public:
-	enum {dim    = DIM,
-				order  = ORDER,
-				nnodes = BasisTraits<ORDER,DIM>::nnodes};
+  enum {dim    = DIM,
+        order  = ORDER,
+        nnodes = BasisTraits<ORDER,DIM>::nnodes};
 
-	typedef T value_type;
+  typedef T value_type;
 
   typedef Expansion<DIM,ORDER,T>                      expansion_type;
   typedef std::map<unsigned int,expansion_type*const> expansion_map;
@@ -122,12 +122,12 @@ private:
 public:
 
 
-	explicit ExpansionHandler()
-	{
-		expansions.clear();
-	}
+  explicit ExpansionHandler()
+  {
+    expansions.clear();
+  }
 
-	
+  
   ~ExpansionHandler()
   {
     BOOST_FOREACH(typename expansion_map::value_type expansion_pair,
@@ -135,7 +135,7 @@ public:
     expansions.clear();
   }
 
-	
+  
   std::pair<typename expansion_map::iterator,bool>
   insert(const unsigned int c, const point_type& u)
   {
@@ -144,7 +144,7 @@ public:
     else return expansions.insert(std::make_pair(c, new expansion_type(u)));
   }
   
-	
+  
   expansion_map& getExpansions()
   { return expansions; }
   const expansion_map& getExpansions() const
@@ -153,8 +153,8 @@ public:
 
   void clearExpansions()
   {
-		BOOST_FOREACH(typename expansion_map::value_type& ep, expansions)
-			ep.second.zero();
+    BOOST_FOREACH(typename expansion_map::value_type& ep, expansions)
+      ep.second.zero();
   }
 
 };

@@ -33,22 +33,22 @@
 
 
 /*! \class Storage
- 	The class storage is thought as a kind of singleton; it initializes and
-	stores all levels of the octree.
+  The class storage is thought as a kind of singleton; it initializes and
+  stores all levels of the octree.
  */
 template <int DIM>
 class Storage
   : boost::noncopyable
 {
-	enum {dim    = DIM,
+  enum {dim    = DIM,
         nboxes = DimTraits<dim>::nboxes};
 
-	typedef typename DimTraits<dim>::point_type point_type;
+  typedef typename DimTraits<dim>::point_type point_type;
 
   typedef Level<dim>               level_type;
   typedef std::vector<level_type*> level_vector;
 
-	level_vector levels;
+  level_vector levels;
 
   double     root_cluster_diam;
   point_type root_cluster_center;
@@ -61,12 +61,12 @@ class Storage
                    const unsigned int lmax);
   
 
-	~Storage()
-	{
-		for (typename level_vector::iterator it=levels.begin();
+  ~Storage()
+  {
+    for (typename level_vector::iterator it=levels.begin();
          it!=levels.end(); ++it) delete *it;
     levels.clear();
-	}
+  }
 
   const unsigned int getNumLevels() const
   {
@@ -80,44 +80,44 @@ class Storage
   }
 
   const level_type *const getLevel(const unsigned int l) const
-	{
+  {
     assert(!levels.empty());
-		return levels.at(l);
-	}
+    return levels.at(l);
+  }
 
   level_type *const getLevel(const unsigned int l)
-	{
+  {
     assert(!levels.empty());
-		return levels.at(l);
-	}
+    return levels.at(l);
+  }
 
   
   //! \name Set either levels for a dynamic or static analysis
   /* @{ */
   void initLevels()
   {
-		for (unsigned int l=0; l<levels.size(); ++l) {
-			level_type *const level = levels.at(l);
-			level->setLowFrequencyRegime();
-		}
+    for (unsigned int l=0; l<levels.size(); ++l) {
+      level_type *const level = levels.at(l);
+      level->setLowFrequencyRegime();
+    }
   }
 
   void initLevels(const double wavenum)
   {
-		const double delimiter = FREQUENCY_REGIME_DELIMITER;
-		for (unsigned int l=0; l<levels.size(); ++l) {
-			level_type *const level = levels.at(l);
-			const double diam = level->getDiam();
-			if (diam*wavenum > delimiter) level->setHighFrequencyRegime(wavenum);
-			else                          level->setLowFrequencyRegime();
-		}
+    const double delimiter = FREQUENCY_REGIME_DELIMITER;
+    for (unsigned int l=0; l<levels.size(); ++l) {
+      level_type *const level = levels.at(l);
+      const double diam = level->getDiam();
+      if (diam*wavenum > delimiter) level->setHighFrequencyRegime(wavenum);
+      else                          level->setLowFrequencyRegime();
+    }
   }
   /* @} */
-	
+  
   
 
   const double getRootClusterDiam()
-	{
+  {
     return root_cluster_diam;
   }
   
@@ -141,15 +141,15 @@ class Storage
 
 
   template <typename m2l_handler_type>
-	void writeInfo(const std::vector<m2l_handler_type>& handler) const
+  void writeInfo(const std::vector<m2l_handler_type>& handler) const
   {
     assert(handler.size() == levels.size());
 
     // root cluster info
     std::cout << "\nBounding box of diam " << root_cluster_diam
-							<< " is centered at " << root_cluster_center << std::endl;
+              << " is centered at " << root_cluster_center << std::endl;
 
-		// level info
+    // level info
     std::cout << "- Level info:" << std::endl;
     for (unsigned int l=0; l<levels.size(); ++l) {
       levels.at(l)->writeInfo();

@@ -29,14 +29,14 @@
 
 
 /*! \class DrawNearField
-	This class is not directly needed within the FMM algorithm; it provides the
-	functionality of drawing the near-field (dense blocks) in the system matrix
-	to a postscript file.
+  This class is not directly needed within the FMM algorithm; it provides the
+  functionality of drawing the near-field (dense blocks) in the system matrix
+  to a postscript file.
 
-	\brief Auxillary class draws near-field of system matrix to postscript file
+  \brief Auxillary class draws near-field of system matrix to postscript file
 
-	@tparam cluster_type type of cluster
-	@tparam relations_type type of cluster-relation
+  @tparam cluster_type type of cluster
+  @tparam relations_type type of cluster-relation
  */
 template <typename cluster_type,
           typename relations_type>
@@ -45,7 +45,7 @@ class DrawNearField
 {
   static const double origin = 45;
   static const double maxpts = 500;
-	std::ofstream& os;
+  std::ofstream& os;
   const unsigned int N;
   const std::vector<relations_type>& relations;
   const double scale;
@@ -99,19 +99,19 @@ public:
 
 
 /*! \class DrawCrossSection
-	This class is not directly needed within the FMM algorithm; it provides the
-	functionality of drawing the cross section through a octree into a
-	postscript file.
+  This class is not directly needed within the FMM algorithm; it provides the
+  functionality of drawing the cross section through a octree into a
+  postscript file.
 
-	\brief Auxillary class draws cross section of octree to postscript file
+  \brief Auxillary class draws cross section of octree to postscript file
 
-	@tparam cluster_type type of cluster
-	@tparam level_type type of level
-	@tparam m2l_handler_type type of m2l-handler
+  @tparam cluster_type type of cluster
+  @tparam level_type type of level
+  @tparam m2l_handler_type type of m2l-handler
  */
 template <typename cluster_type,
-					typename level_type,
-					typename m2l_handler_type>
+          typename level_type,
+          typename m2l_handler_type>
 class DrawCrossSection
   : public std::unary_function<cluster_type,void>
 {
@@ -120,13 +120,13 @@ class DrawCrossSection
 
   static const double origin = 40;
   static const double maxpts = 595;
-	std::ofstream& os;
+  std::ofstream& os;
   const point_type rcenter;
   const double rext;
   const point_type loc;
   const unsigned int dir0;
-	const std::vector<level_type*>& levels;
-	const std::vector<m2l_handler_type>& m2lv;
+  const std::vector<level_type*>& levels;
+  const std::vector<m2l_handler_type>& m2lv;
   const double scale;
   const double lw;
   const double rc;
@@ -137,12 +137,11 @@ public:
                             const double _rext,
                             const point_type _loc,
                             const unsigned int _dir0,
-														const std::vector<level_type*>& _levels,
-														const std::vector<m2l_handler_type>& _m2lv)
+                            const std::vector<level_type*>& _levels,
+                            const std::vector<m2l_handler_type>& _m2lv)
     : os(_os),
       rcenter(_rcenter), rext(_rext), loc(_loc), dir0(_dir0), levels(_levels),
-			m2lv(_m2lv), scale((maxpts-2*origin)/rext),
-//      lw(2/scale),
+      m2lv(_m2lv), scale((maxpts-2*origin)/rext),
       lw(.5/scale),
       rc(maxpts/(2*scale))
   {
@@ -159,46 +158,15 @@ public:
     os << "closepath stroke" << std::endl;
   }
 
-//  void operator()(cluster_type *const cl) const
-//  {
-//    const unsigned int dir1 = (dir0+2) % dim;
-//    const unsigned int dir2 = (dir0+1) % dim;
-//    const point_type& center = cl->getCenter();
-//    const double ext = cl->getLevel()->getExtension();
-//
-//    const double lw_ = lw / (cl->getLevel()->getNLevel()+1);
-//
-//    if ( ((center[dir0]-loc[dir0]) <= ext/2) &&
-//         ((center[dir0]-loc[dir0]) > -ext/2) ) {
-//
-//      const double a = center[dir1] - rcenter[dir1] - ext/2;
-//      const double b = center[dir2] - rcenter[dir2] - ext/2;
-//      os << rc+a     << " " << rc+b     << " moveto" << std::endl;
-//      os << rc+a+ext << " " << rc+b     << " lineto" << std::endl;
-//      os << rc+a+ext << " " << rc+b+ext << " lineto" << std::endl;
-//      os << rc+a     << " " << rc+b+ext << " lineto" << std::endl;
-//      os << "closepath " << lw_ << " setlinewidth stroke" << std::endl;
-//
-//      if (cl->isleaf()) {
-//        os << "/Times-Roman findfont" << std::endl;
-//        os << ext*0.8 << " scalefont" << std::endl;
-//        os << "setfont" << std::endl;
-//        os << rc+a+ext*.05 << " " << rc+b+ext*.1 << " moveto" << std::endl;
-//        os << "(" << cl->getsize() << ") show" << std::endl;
-//      }
-//
-//    }
-//  }
-
   void operator()(cluster_type *const cl) const
   {
     const unsigned int dir1 = (dir0+2) % dim;
     const unsigned int dir2 = (dir0+1) % dim;
     const point_type& center = cl->getCenter();
-		const level_type *const level = levels.at(cl->getNumLevel());
+    const level_type *const level = levels.at(cl->getNumLevel());
     const double ext = level->getExtension();
 
-		if ( ((center[dir0]-loc[dir0]) <= ext/2) &&
+    if ( ((center[dir0]-loc[dir0]) <= ext/2) &&
          ((center[dir0]-loc[dir0]) > -ext/2) ) {
 
       const double a = center[dir1] - rcenter[dir1] - ext/2;
@@ -207,24 +175,15 @@ public:
       os << rc+a+ext << " " << rc+b     << " lineto" << std::endl;
       os << rc+a+ext << " " << rc+b+ext << " lineto" << std::endl;
       os << rc+a     << " " << rc+b+ext << " lineto" << std::endl;
-			
-			if (!cl->isLeaf() && m2lv.at(cl->getNumLevel()).size()>0)
-				os << "closepath gsave 0.9 setgray fill grestore 0 setgray stroke"
-					 << std::endl;
-			else if (cl->isLeaf())
-				os << "closepath gsave 0.6 setgray fill grestore 0 setgray stroke"
-					 << std::endl;
-			else
-				os << "closepath stroke" << std::endl;
-
-//      if (cl->isleaf()) {
-//        os << "/Times-Roman findfont" << std::endl;
-//        os << ext*0.8 << " scalefont" << std::endl;
-//        os << "setfont" << std::endl;
-//        os << rc+a+ext*.05 << " " << rc+b+ext*.1 << " moveto" << std::endl;
-//        os << "(" << cl->getsize() << ") show" << std::endl;
-//      }
-
+      
+      if (!cl->isLeaf() && m2lv.at(cl->getNumLevel()).size()>0)
+        os << "closepath gsave 0.9 setgray fill grestore 0 setgray stroke"
+           << std::endl;
+      else if (cl->isLeaf())
+        os << "closepath gsave 0.6 setgray fill grestore 0 setgray stroke"
+           << std::endl;
+      else
+        os << "closepath stroke" << std::endl;
     }
   }
 
@@ -235,22 +194,22 @@ public:
 
 
 template <typename cluster_type,
-					typename level_type,
-					typename m2l_handler_type>
+          typename level_type,
+          typename m2l_handler_type>
 void drawCrossSection(const std::string& filename,
-											const typename cluster_type::point_type location,
-											const unsigned int direction,
-											const typename cluster_type::point_type center,
-											const double extension,
-											const std::vector<std::vector<cluster_type*> >& clvv,
-											const std::vector<level_type*>& levels,
-											const std::vector<m2l_handler_type>& m2lv)
+                      const typename cluster_type::point_type location,
+                      const unsigned int direction,
+                      const typename cluster_type::point_type center,
+                      const double extension,
+                      const std::vector<std::vector<cluster_type*> >& clvv,
+                      const std::vector<level_type*>& levels,
+                      const std::vector<m2l_handler_type>& m2lv)
 {
-	typedef DrawCrossSection<cluster_type,level_type,m2l_handler_type>
-		drawer_type;
+  typedef DrawCrossSection<cluster_type,level_type,m2l_handler_type>
+    drawer_type;
 
   std::ofstream psout
-		((filename+"_d"+boost::lexical_cast<std::string>(direction)+".ps").c_str());
+    ((filename+"_d"+boost::lexical_cast<std::string>(direction)+".ps").c_str());
   drawer_type draw(psout, center, extension, location, direction, levels, m2lv);
   BOOST_FOREACH(const std::vector<cluster_type*>& clv, clvv)
     std::for_each(clv.begin(), clv.end(), draw);

@@ -41,16 +41,16 @@ template <int,int> class Tensor;
 
 /*! \defgroup mtranslation M2M, L2L: Translation Operators
  
-	The translation operators are
+  The translation operators are
 
-	\arg P2M: Particle-To-Multipole Operator
-	\arg M2M: Multipole-To-Multipole Operator
-	\arg L2L: Local-To-Local Operator
-	\arg L2P: Local-To-Particle Operator
+  \arg P2M: Particle-To-Multipole Operator
+  \arg M2M: Multipole-To-Multipole Operator
+  \arg L2L: Local-To-Local Operator
+  \arg L2P: Local-To-Particle Operator
 
-	and they translate the \a multipole and \local expansions from
-	child-to-parent (upward pass), respectively, from parent-to-child (downward
-	pass) level.
+  and they translate the \a multipole and \local expansions from
+  child-to-parent (upward pass), respectively, from parent-to-child (downward
+  pass) level.
  */
 
 
@@ -61,14 +61,14 @@ template <int,int> class Tensor;
 /*! \ingroup mtranslation
 
   \class IOcomputerLF 
-	
-	\brief Computes interpolation operators for leaf clusters
+  
+  \brief Computes interpolation operators for leaf clusters
 
-	\todo Find a better name and clean up or even better refactor
+  \todo Find a better name and clean up or even better refactor
 
-	@tparam DIM spatial dimension
-	@tparam ORDER interpolation order
-	@tparam T value type
+  @tparam DIM spatial dimension
+  @tparam ORDER interpolation order
+  @tparam T value type
  */
 template <int DIM, int ORDER, typename T>
 class IOcomputerLF :
@@ -139,19 +139,19 @@ public:
     
   }
 
-	
+  
   /*!
-		Assembles the P2M/L2P opertor for particles
-		@param[in] nparticles number of particles
-		@param[in] pindices reordered particle indices
-		@param[in] particles array of particles
-		@param[out] S P2M/L2P matrix to assemble
-	 */
+    Assembles the P2M/L2P opertor for particles
+    @param[in] nparticles number of particles
+    @param[in] pindices reordered particle indices
+    @param[in] particles array of particles
+    @param[out] S P2M/L2P matrix to assemble
+   */
   template <typename value_type,
-						typename particle_type>
+            typename particle_type>
   void operator()(const unsigned int nparticles,
-									const unsigned int *const pindices,
-									const particle_type *const particles,
+                  const unsigned int *const pindices,
+                  const particle_type *const particles,
                   value_type *const S) const
   {
     value_type S_[nnodes];
@@ -165,14 +165,14 @@ public:
 
 
   /*!
-		Assembles the P2M/L2P opertor for particles
-		@param[in] npoints number of points
-		@param[in] points array of points
-		@param[out] S P2M/L2P matrix to assemble
-	 */
+    Assembles the P2M/L2P opertor for particles
+    @param[in] npoints number of points
+    @param[in] points array of points
+    @param[out] S P2M/L2P matrix to assemble
+   */
   template <typename value_type>
   void operator()(const unsigned int npoints,
-									const point_type *const points,
+                  const point_type *const points,
                   value_type *const S) const
   {
     value_type S_[nnodes];
@@ -193,23 +193,23 @@ public:
 /*! \ingroup mtranslation
 
   \class IOsetterNL
-	
-	\brief Computes interpolation operators not for leaf clusters
+  
+  \brief Computes interpolation operators not for leaf clusters
 
   Interpolation operator setter of (N)on (L)eaf clusters. Since the grid is
   regular, all non leaf clusters of the same level have identical
   interpolation operators. Hence, memory for the interpolation operator S is
   only allocated here but not freed.
 
-	\todo Find a better name and clean up or even better refactor
+  \todo Find a better name and clean up or even better refactor
 
-	@tparam DIM spatial dimension
-	@tparam ORDER interpolation order
-	@tparam T value type
+  @tparam DIM spatial dimension
+  @tparam ORDER interpolation order
+  @tparam T value type
  */
 template <int DIM,
-					int ORDER,
-					typename T>
+          int ORDER,
+          typename T>
 class IOsetterNL
 {
   enum {nboxes = DimTraits<DIM>::nboxes,
@@ -241,12 +241,12 @@ public:
     // compute S
     IOcomputerLF<DIM,ORDER,T> cmp;
     for (unsigned int b=0; b<nboxes; ++b)
-			cmp(nnodes, x + b*nnodes, S.get() + b*nnodes*nnodes);
+      cmp(nnodes, x + b*nnodes, S.get() + b*nnodes*nnodes);
 
   }
 
-	const boost::shared_array<T>& getS() const
-	{	return S;	}
+  const boost::shared_array<T>& getS() const
+  { return S; }
 
 };
 
@@ -254,25 +254,25 @@ public:
 
 
 template <int ORDER,
-					typename T>
+          typename T>
 class IOsetterNL<3,ORDER,T>
 {
   enum {DIM = 3,
-				nboxes = DimTraits<DIM>::nboxes,
+        nboxes = DimTraits<DIM>::nboxes,
         nnodes = BasisTraits<ORDER,DIM>::nnodes};
   //typedef typename DimTraits<DIM>::point_type point_type;
   typedef boost::array<double[ORDER],ORDER> order_order_array;
-	
+  
   typedef Chebyshev< ORDER>  basis_type;
   typedef Tensor<DIM,ORDER> tensor_type; 
 
-	// own members
+  // own members
   boost::shared_array<T> S;
   const order_order_array T_of_roots;
 
 
   static
-	const order_order_array eval_T_of_roots()
+  const order_order_array eval_T_of_roots()
   {
     order_order_array values;
     for (unsigned int o=1; o<ORDER; ++o)
@@ -282,29 +282,29 @@ class IOsetterNL<3,ORDER,T>
   }
 
 
-	void assemble(const double *const x, T *const S) const
-	{
-		// values of chebyshev polynomials of source particle: T_o(x_i)
-		double T_of_x[ORDER];
-		// loop: local points (mapped in [-1,1])
-		for (unsigned int m=0; m<ORDER; ++m) {
-			// evaluate chebyshev polynomials at local points
-			for (unsigned int o=1; o<ORDER; ++o) T_of_x[o] = basis_type::T(o, x[m]);
-			// assemble S
-			for (unsigned int n=0; n<ORDER; ++n) {
-				S[n*ORDER + m] = 1. / ORDER;
-				for (unsigned int o=1; o<ORDER; ++o)
-					S[n*ORDER + m] += 2. / ORDER * T_of_x[o] * T_of_roots[o][n];
-			}
-		}
-	}
-	
+  void assemble(const double *const x, T *const S) const
+  {
+    // values of chebyshev polynomials of source particle: T_o(x_i)
+    double T_of_x[ORDER];
+    // loop: local points (mapped in [-1,1])
+    for (unsigned int m=0; m<ORDER; ++m) {
+      // evaluate chebyshev polynomials at local points
+      for (unsigned int o=1; o<ORDER; ++o) T_of_x[o] = basis_type::T(o, x[m]);
+      // assemble S
+      for (unsigned int n=0; n<ORDER; ++n) {
+        S[n*ORDER + m] = 1. / ORDER;
+        for (unsigned int o=1; o<ORDER; ++o)
+          S[n*ORDER + m] += 2. / ORDER * T_of_x[o] * T_of_roots[o][n];
+      }
+    }
+  }
+  
 
   
 public:
   explicit IOsetterNL()
-		: S(new T [nboxes * 3*ORDER*ORDER]),
-			T_of_roots(eval_T_of_roots())
+    : S(new T [nboxes * 3*ORDER*ORDER]),
+      T_of_roots(eval_T_of_roots())
   {
     // loop over all child boxed
     for (unsigned int b=0; b<nboxes; ++b) {
@@ -313,19 +313,19 @@ public:
         center[d] = 0.5 * DimTraits<DIM>::child_pos[b][d];
       const map_loc_glob<DIM> map(center, 1.0);
       
-			// assemble S for each child box
-			T *const Sb = S.get() + b * 3*ORDER*ORDER;
-			for (unsigned int d=0; d<DIM; ++d) {
-				double x[ORDER];
-				for (unsigned int o=0; o<ORDER; ++o)
-					x[o] = map(d, basis_type::nodes[o]);
-				assemble(x, Sb + d * ORDER*ORDER);
-			}
-		}
-	}
+      // assemble S for each child box
+      T *const Sb = S.get() + b * 3*ORDER*ORDER;
+      for (unsigned int d=0; d<DIM; ++d) {
+        double x[ORDER];
+        for (unsigned int o=0; o<ORDER; ++o)
+          x[o] = map(d, basis_type::nodes[o]);
+        assemble(x, Sb + d * ORDER*ORDER);
+      }
+    }
+  }
 
-	const boost::shared_array<T>& getS() const
-	{	return S;	}
+  const boost::shared_array<T>& getS() const
+  { return S; }
 
 };
 
@@ -351,17 +351,17 @@ public:
 
 
 /*!
-	\ingroup mtranslation
+  \ingroup mtranslation
 */
 template <typename cluster_type,
-					typename particle_type,
+          typename particle_type,
           typename clusterbasis_type,
           typename m2l_handler_type>
 void setIO(const std::vector<std::vector<cluster_type*> >& clvv,
            std::vector<clusterbasis_type>& basis,
            std::vector<m2l_handler_type>& m2lv,
-					 const unsigned int *const pindices,
-					 const particle_type *const particles)
+           const unsigned int *const pindices,
+           const particle_type *const particles)
 {
   enum {dim    = clusterbasis_type::dim,
         order  = clusterbasis_type::order,
@@ -372,22 +372,22 @@ void setIO(const std::vector<std::vector<cluster_type*> >& clvv,
   for (unsigned int l=0; l<clvv.size(); ++l) {
     const std::vector<cluster_type*>& clv = clvv.at(l);
     m2l_handler_type& m2l = m2lv.at(l);
-		const double ext = m2l.getLevel()->getDiam();
-		if (m2l.hasInteractions()) {
+    const double ext = m2l.getLevel()->getDiam();
+    if (m2l.hasInteractions()) {
       switch (m2l.getLevel()->isLeaf()) {
       case true: {
         BOOST_FOREACH(const cluster_type *const cl, clv) {
-					ioc_type ioc(cl->getCenter(), ext);
-					boost::shared_array<value_type>
-						S(new value_type [cl->getSize()*nnodes]);
-					ioc(cl->getSize(), pindices+cl->getNbeg(), particles, S.get());
-					basis.at(cl->getCidx()).assign(S);
-				}
+          ioc_type ioc(cl->getCenter(), ext);
+          boost::shared_array<value_type>
+            S(new value_type [cl->getSize()*nnodes]);
+          ioc(cl->getSize(), pindices+cl->getNbeg(), particles, S.get());
+          basis.at(cl->getCidx()).assign(S);
+        }
       } break;
       case false: {
-				IOsetterNL<dim,order,value_type> ios;
+        IOsetterNL<dim,order,value_type> ios;
         BOOST_FOREACH(const cluster_type *const cl, clv)
-					basis.at(cl->getCidx()).assign(ios.getS());
+          basis.at(cl->getCidx()).assign(ios.getS());
       } break;
       }
     }

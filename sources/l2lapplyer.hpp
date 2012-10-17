@@ -30,12 +30,12 @@
 
 
 /*! 
-	\addtogroup mtranslation
+  \addtogroup mtranslation
 
-	\par L2L: Local-To-Local Operators
-	The L2L (and L2P) operators translate the local expansions from
-	parant-to-child cluster levels. They differ between low-, respectively
-	high-frequency regime.
+  \par L2L: Local-To-Local Operators
+  The L2L (and L2P) operators translate the local expansions from
+  parant-to-child cluster levels. They differ between low-, respectively
+  high-frequency regime.
 
 */
 
@@ -43,11 +43,11 @@
 
 
 /*! \class L2Lapplyer
-	Abstract base class for all local-to-local operators
+  Abstract base class for all local-to-local operators
 
-	\brief Abstract base class for all L2L operators
+  \brief Abstract base class for all L2L operators
 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename m2l_handler_type>
@@ -58,13 +58,13 @@ class L2Lapplyer
 
 protected:
 
-	mutable FlopCounter fcount;
+  mutable FlopCounter fcount;
 
 
   L2Lapplyer(const m2l_handler_type& _m2l,
-						 const std::string& description)
-		: m2l(_m2l), fcount(description, m2l.getLevel()->getNlevel())
-	{}
+             const std::string& description)
+    : m2l(_m2l), fcount(description, m2l.getLevel()->getNlevel())
+  {}
 
   // does something only for Qu Ci Qb' convolution
   template <typename value_type>
@@ -78,17 +78,17 @@ public:
   // l2l
   template <typename value_type>
   void applyL2L(const value_type *const S,
-								const unsigned int nX,
-								const value_type *const X,
-								const unsigned int nx,
-								value_type *const x) const
+                const unsigned int nX,
+                const value_type *const X,
+                const unsigned int nx,
+                value_type *const x) const
   {
     blas::gemva(nx, nX, 1., const_cast<value_type*>(S),
                 const_cast<value_type*>(X), x);
     assert(check_nan(nx, x));
 
-		// add flops
-		fcount.addFlops(nx*(2*nX-1) + nx);
+    // add flops
+    fcount.addFlops(nx*(2*nX-1) + nx);
   }
 };
 
@@ -98,22 +98,22 @@ public:
 
 
 /*! \class L2PapplyerLF
-	Low-frequency (non-directional) local-to-particle operator (L2P)
+  Low-frequency (non-directional) local-to-particle operator (L2P)
 
-	\brief L2P in the low-frequency regime 
+  \brief L2P in the low-frequency regime 
 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type>
 class L2PapplyerLF : L2Lapplyer<cluster_type,m2l_handler_type>
 {
   enum {nnodes = clusterbasis_type::nnodes};
   typedef typename clusterbasis_type::value_type value_type;
 
-	using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
+  using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
   std::vector<clusterbasis_type>&     rbasis;
   std::vector<expansionhandler_type>& rexph;
@@ -130,19 +130,19 @@ public:
 
   void operator()(const cluster_type *const clx) const
   {
-		// asserts
+    // asserts
     assert(clx->isLeaf());                            // leaf
     assert(rexph.at(clx->getCidx()).getExpansions().size()==1); // low freq
 
-		// unique cluster index
-		const unsigned int cidx = clx->getCidx();
+    // unique cluster index
+    const unsigned int cidx = clx->getCidx();
 
     // does something only for Qu Ci Qb' convolution
     value_type *const X = rexph.at(cidx).getExpansions().at(0)->getvals();
     expand(X);
 
     applyL2L(rbasis.at(cidx).getS(), nnodes, X, clx->getSize(),
-						 x+clx->getNbeg());
+             x+clx->getNbeg());
   }
 };
 
@@ -152,28 +152,28 @@ public:
 
 
 /*! \class L2LapplyerLF
-	Low-frequency (non-directional) local-to-local operator (L2L)
+  Low-frequency (non-directional) local-to-local operator (L2L)
 
-	\brief L2L in the low-frequency regime 
+  \brief L2L in the low-frequency regime 
 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type>
 class L2LapplyerLF : L2Lapplyer<cluster_type,m2l_handler_type>
 {
   enum {DIM = cluster_type::dim,
-				ORDER = clusterbasis_type::order,
-				nboxes = cluster_type::nboxes,
+        ORDER = clusterbasis_type::order,
+        nboxes = cluster_type::nboxes,
         nnodes = clusterbasis_type::nnodes};
   typedef typename clusterbasis_type::value_type value_type;
-	typedef typename expansionhandler_type::expansion_type expansion_type;
+  typedef typename expansionhandler_type::expansion_type expansion_type;
 
-	using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
+  using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
-	PermutationHandler<DIM,ORDER> phandler;
+  PermutationHandler<DIM,ORDER> phandler;
 
   std::vector<clusterbasis_type>&     rbasis;
   std::vector<expansionhandler_type>& rexph;
@@ -181,7 +181,7 @@ class L2LapplyerLF : L2Lapplyer<cluster_type,m2l_handler_type>
 public:
   L2LapplyerLF(const m2l_handler_type& m2l,
                std::vector<clusterbasis_type>& _rbasis,
-							 std::vector<expansionhandler_type>& _rexph)
+               std::vector<expansionhandler_type>& _rexph)
     : L2Lapplyer<cluster_type,m2l_handler_type>(m2l, "L2LapplyerLF"),
       rbasis(_rbasis), rexph(_rexph) {}
 
@@ -191,8 +191,8 @@ public:
     assert(!clx->isLeaf());                           // no leaf
     assert(rexph.at(clx->getCidx()).getExpansions().size()==1); // low freq
 
-		// unique cluster index
-		const unsigned int cidx = clx->getCidx();
+    // unique cluster index
+    const unsigned int cidx = clx->getCidx();
 
     // does something only for Qu Ci Qb' convolution
     expansion_type *const expansion = rexph.at(cidx).getExpansions().at(0);
@@ -204,9 +204,9 @@ public:
     for (unsigned int b=0; b<nboxes; ++b) {
       value_type *const x = expansion->getcvals(b);
       if (x) {
-				phandler.l2l(S + b * 3*ORDER*ORDER, X, x);
-				fcount.addFlops(3 * (ORDER*ORDER*(2*ORDER-1)) + nnodes);
-			}
+        phandler.l2l(S + b * 3*ORDER*ORDER, X, x);
+        fcount.addFlops(3 * (ORDER*ORDER*(2*ORDER-1)) + nnodes);
+      }
     }
 
   }
@@ -219,35 +219,35 @@ public:
 
 
 /*! \class L2PapplyerHF
-	High-frequency (directional) local-to-particle operator (L2P)
+  High-frequency (directional) local-to-particle operator (L2P)
 
-	\brief L2P in the high-frequency regime 
+  \brief L2P in the high-frequency regime 
 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type,
-					typename particle_type>
+          typename particle_type>
 class L2PapplyerHF
-	: L2Lapplyer<cluster_type,m2l_handler_type>
+  : L2Lapplyer<cluster_type,m2l_handler_type>
 {
   enum {DIM = cluster_type::dim,
-				ORDER = clusterbasis_type::order,
-				nnodes = clusterbasis_type::nnodes};
+        ORDER = clusterbasis_type::order,
+        nnodes = clusterbasis_type::nnodes};
   typedef typename cluster_type::point_type              point_type;
   typedef typename clusterbasis_type::value_type         value_type;
 
-	typedef value_type T;
+  typedef value_type T;
 
   typedef typename expansionhandler_type::expansion_type expansion_type;
   typedef typename expansionhandler_type::expansion_map  expansion_map;
 
-	using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
+  using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
-	const PlaneWave<         DIM,ORDER,T>&                pwave;
-	const PlaneWaveParticles<DIM,ORDER,T,particle_type>& ppwave;
+  const PlaneWave<         DIM,ORDER,T>&                pwave;
+  const PlaneWaveParticles<DIM,ORDER,T,particle_type>& ppwave;
 
   std::vector<clusterbasis_type>& rbasis;
   std::vector<expansionhandler_type>& rexph;
@@ -256,29 +256,29 @@ class L2PapplyerHF
 
 public:
   explicit
-	L2PapplyerHF(const m2l_handler_type& m2l,
-							 std::vector<clusterbasis_type>& _rbasis,
-							 std::vector<expansionhandler_type>& _rexph,
-							 value_type *const _x,
-							 const PlaneWave<DIM,ORDER,T>& _pwave,
-							 const PlaneWaveParticles<DIM,ORDER,T,particle_type>& _ppwave)
+  L2PapplyerHF(const m2l_handler_type& m2l,
+               std::vector<clusterbasis_type>& _rbasis,
+               std::vector<expansionhandler_type>& _rexph,
+               value_type *const _x,
+               const PlaneWave<DIM,ORDER,T>& _pwave,
+               const PlaneWaveParticles<DIM,ORDER,T,particle_type>& _ppwave)
     : L2Lapplyer<cluster_type,m2l_handler_type>(m2l, "L2PapplyerHF"),
-			pwave(_pwave), ppwave(_ppwave), rbasis(_rbasis), rexph(_rexph), x(_x) {}
+      pwave(_pwave), ppwave(_ppwave), rbasis(_rbasis), rexph(_rexph), x(_x) {}
 
   void operator()(const cluster_type *const clx) const
   {
-		// assert
+    // assert
     assert(clx->isLeaf()); // leaf
 
-		// unique cluster index and center
-		const unsigned int cidx  = clx->getCidx();
-		const point_type& center = clx->getCenter();
+    // unique cluster index and center
+    const unsigned int cidx  = clx->getCidx();
+    const point_type& center = clx->getCenter();
 
-		// 1. Expand, apply right plane wave and copy //////////
-		expansion_map& rexp = rexph.at(cidx).getExpansions();
-		const unsigned int nexpansions = rexp.size();
-		value_type *const X_all = new value_type [nnodes * nexpansions];
-		unsigned int counter = 0;
+    // 1. Expand, apply right plane wave and copy //////////
+    expansion_map& rexp = rexph.at(cidx).getExpansions();
+    const unsigned int nexpansions = rexp.size();
+    value_type *const X_all = new value_type [nnodes * nexpansions];
+    unsigned int counter = 0;
     BOOST_FOREACH(typename expansion_map::value_type& ep, rexp) {
       expansion_type *const expansion = ep.second;
       
@@ -288,32 +288,32 @@ public:
       expand(X, c);
       
       // apply plane wave
-			const value_type scal = pwave.plane_wave(center, expansion->getu());
+      const value_type scal = pwave.plane_wave(center, expansion->getu());
       blas::hadd(nnodes, scal, pwave.getppw(c), X);
-			fcount.addFlops(7 + 2*nnodes);
-			blas::copy(nnodes, X, X_all + (counter++)*nnodes);
-		}
-		
-		// 2. Apply l2l ////////////////////////////////////////
-		const unsigned int size = clx->getSize();
-		value_type *const x_all = new value_type [size * nexpansions];
-		blas::gemm(size, nnodes, nexpansions, 1.,
-							 rbasis.at(cidx).getS(), size, X_all, nnodes, x_all, size);
-		fcount.addFlops(size*(2*nnodes-1)*nexpansions);
-		delete [] X_all;
-		
-		// 3. Apply plane wave and add contribution ////////////
-		value_type *const cpw = new value_type [size];
-		counter = 0;
-		BOOST_FOREACH(typename expansion_map::value_type& ep,	rexp) {
+      fcount.addFlops(7 + 2*nnodes);
+      blas::copy(nnodes, X, X_all + (counter++)*nnodes);
+    }
+    
+    // 2. Apply l2l ////////////////////////////////////////
+    const unsigned int size = clx->getSize();
+    value_type *const x_all = new value_type [size * nexpansions];
+    blas::gemm(size, nnodes, nexpansions, 1.,
+               rbasis.at(cidx).getS(), size, X_all, nnodes, x_all, size);
+    fcount.addFlops(size*(2*nnodes-1)*nexpansions);
+    delete [] X_all;
+    
+    // 3. Apply plane wave and add contribution ////////////
+    value_type *const cpw = new value_type [size];
+    counter = 0;
+    BOOST_FOREACH(typename expansion_map::value_type& ep, rexp) {
       expansion_type *const expansion = ep.second;
-			ppwave.setcpw(clx, expansion->getu(), cpw);
+      ppwave.setcpw(clx, expansion->getu(), cpw);
       blas::hadm(size, 1., cpw, x_all+counter*size);
       blas::add(size, x_all+counter*size, x+clx->getNbeg());
-			fcount.addFlops(10*size);
-			counter++;
+      fcount.addFlops(10*size);
+      counter++;
     }
-		delete [] cpw;
+    delete [] cpw;
     delete [] x_all;
 
   }
@@ -326,37 +326,37 @@ public:
 
 /*!
   \class L2LapplyerHF
-	High-frequency (directional) local-to-local operator (L2L)
+  High-frequency (directional) local-to-local operator (L2L)
 
-	\brief L2L in the high-frequency regime 
+  \brief L2L in the high-frequency regime 
 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type>
 class L2LapplyerHF
   : L2Lapplyer<cluster_type,m2l_handler_type>
 {
   enum {DIM = cluster_type::dim,
-				ORDER = clusterbasis_type::order,
-				nboxes = cluster_type::nboxes,
+        ORDER = clusterbasis_type::order,
+        nboxes = cluster_type::nboxes,
         nnodes = clusterbasis_type::nnodes};
 
   typedef typename cluster_type::point_type              point_type;
   typedef typename clusterbasis_type::value_type         value_type;
 
-	typedef value_type T;
+  typedef value_type T;
 
   typedef typename expansionhandler_type::expansion_type expansion_type;
   typedef typename expansionhandler_type::expansion_map  expansion_map;
 
-	using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
+  using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
-	PermutationHandler<DIM,ORDER> phandler;
+  PermutationHandler<DIM,ORDER> phandler;
 
-	const PlaneWave<DIM,ORDER,T>& pwave;
+  const PlaneWave<DIM,ORDER,T>& pwave;
 
   std::vector<clusterbasis_type>& rbasis;
   std::vector<expansionhandler_type>& rexph;
@@ -364,82 +364,82 @@ class L2LapplyerHF
 public:
   L2LapplyerHF(const m2l_handler_type& m2l,
                std::vector<clusterbasis_type>& _rbasis,
-							 std::vector<expansionhandler_type>& _rexph,
-							 const PlaneWave<DIM,ORDER,T>& _pwave)
+               std::vector<expansionhandler_type>& _rexph,
+               const PlaneWave<DIM,ORDER,T>& _pwave)
     : L2Lapplyer<cluster_type,m2l_handler_type>(m2l, "L2LapplyerHF"),
-			pwave(_pwave), rbasis(_rbasis),	rexph(_rexph)
+      pwave(_pwave), rbasis(_rbasis), rexph(_rexph)
   {}
 
   void operator()(const cluster_type *const clx) const
   {
-		// assert    
+    // assert    
     assert(!clx->isLeaf()); // no leaf
 
-		// unique cluster index and center
-		const unsigned int cidx = clx->getCidx();
-		const point_type& center = clx->getCenter();
+    // unique cluster index and center
+    const unsigned int cidx = clx->getCidx();
+    const point_type& center = clx->getCenter();
 
-		// 1. Expand, apply right plane wave and copy //////////
-		expansion_map& rexp = rexph.at(cidx).getExpansions();
-		const unsigned int nexpansions = rexp.size();
-		unsigned int counter[nboxes];
-		value_type* X_all[  nboxes];
-		for (unsigned int b=0; b<nboxes; ++b) {
-			X_all[b] = new value_type [nnodes * nexpansions];
-			counter[b] = 0;
-		}
+    // 1. Expand, apply right plane wave and copy //////////
+    expansion_map& rexp = rexph.at(cidx).getExpansions();
+    const unsigned int nexpansions = rexp.size();
+    unsigned int counter[nboxes];
+    value_type* X_all[  nboxes];
+    for (unsigned int b=0; b<nboxes; ++b) {
+      X_all[b] = new value_type [nnodes * nexpansions];
+      counter[b] = 0;
+    }
     BOOST_FOREACH(typename expansion_map::value_type& ep, rexp) {
       expansion_type *const expansion = ep.second;
       
-			// does something only for Qu Ci Qb' convolution
+      // does something only for Qu Ci Qb' convolution
       const unsigned int c = ep.first;
       value_type *const X = expansion->getvals();
       expand(X, c);
-			
+      
       // apply plane wave
-			const point_type& u = expansion->getu();
-			const value_type scal = pwave.plane_wave(center, u);
+      const point_type& u = expansion->getu();
+      const value_type scal = pwave.plane_wave(center, u);
       blas::hadd(nnodes, scal, pwave.getppw(c), X);
-			fcount.addFlops(2*nnodes + 7);
+      fcount.addFlops(2*nnodes + 7);
 
-			// copy only needed ones
+      // copy only needed ones
       for (unsigned int b=0; b<nboxes; ++b) {
         value_type *const x_ = expansion->getcvals(b);
-        if (x_)	blas::copy(nnodes, X, X_all[b] + (counter[b]++) * nnodes);
-			}
-		}
+        if (x_) blas::copy(nnodes, X, X_all[b] + (counter[b]++) * nnodes);
+      }
+    }
 
-		// 2. Apply l2l ////////////////////////////////////////
-		value_type* x_all[nboxes];
-		value_type *const S = rbasis.at(cidx).getS();
-		for (unsigned int b=0; b<nboxes; ++b) {
-			x_all[b] = new value_type [nnodes * counter[b]];
-			phandler.l2l(S + b * 3*ORDER*ORDER, counter[b], X_all[b], x_all[b]);
-			fcount.addFlops(3 * (ORDER*ORDER*(2*ORDER-1)) + nnodes);
-			delete [] X_all[b];
-			counter[b] = 0;
-		}
+    // 2. Apply l2l ////////////////////////////////////////
+    value_type* x_all[nboxes];
+    value_type *const S = rbasis.at(cidx).getS();
+    for (unsigned int b=0; b<nboxes; ++b) {
+      x_all[b] = new value_type [nnodes * counter[b]];
+      phandler.l2l(S + b * 3*ORDER*ORDER, counter[b], X_all[b], x_all[b]);
+      fcount.addFlops(3 * (ORDER*ORDER*(2*ORDER-1)) + nnodes);
+      delete [] X_all[b];
+      counter[b] = 0;
+    }
 
-		// 3. Apply plane wave and add contribution ////////////
+    // 3. Apply plane wave and add contribution ////////////
     BOOST_FOREACH(typename expansion_map::value_type& ep, rexp) {
       expansion_type *const expansion = ep.second; 
       const unsigned int c = ep.first;
-			for (unsigned int b=0; b<nboxes; ++b) {
+      for (unsigned int b=0; b<nboxes; ++b) {
         value_type *const x_ = expansion->getcvals(b);
         if (x_) {
-					const value_type *const cpw = pwave.getcpw(c);
-					const value_type scal = pwave.plane_wave(center, expansion->getu());
+          const value_type *const cpw = pwave.getcpw(c);
+          const value_type scal = pwave.plane_wave(center, expansion->getu());
           blas::hadm(nnodes, scal, cpw+b*nnodes, x_all[b]+counter[b]*nnodes);
           blas::add(nnodes, x_all[b]+counter[b]*nnodes, x_);
-					fcount.addFlops(7 + 3*nnodes);
-					counter[b]++;
+          fcount.addFlops(7 + 3*nnodes);
+          counter[b]++;
         }
       }
     }
 
-		// free memory
-		for(unsigned int b=0; b<nboxes; ++b)
-			delete [] x_all[b];
+    // free memory
+    for(unsigned int b=0; b<nboxes; ++b)
+      delete [] x_all[b];
   }
 
 };
@@ -458,13 +458,13 @@ public:
 
 
 /*! 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type,
-					typename particle_type>
+          typename particle_type>
 void ApplyL2Loperators
 (const std::vector<std::vector<cluster_type*> >& rclvv,
  std::vector<clusterbasis_type>& rbasis,
@@ -475,88 +475,88 @@ void ApplyL2Loperators
  const unsigned int  *const pindices,
  const double wavenum)
 {
-	enum {DIM = cluster_type::dim,
-				ORDER = clusterbasis_type::order};
-	typedef typename clusterbasis_type::value_type T;
+  enum {DIM = cluster_type::dim,
+        ORDER = clusterbasis_type::order};
+  typedef typename clusterbasis_type::value_type T;
 
   typedef L2PapplyerLF<cluster_type,clusterbasis_type,
-												expansionhandler_type,m2l_handler_type>
-		l2l_lfl_type;
+                        expansionhandler_type,m2l_handler_type>
+    l2l_lfl_type;
   typedef L2LapplyerLF< cluster_type,clusterbasis_type,
-												expansionhandler_type,m2l_handler_type>
-		l2l_lf_type;
+                        expansionhandler_type,m2l_handler_type>
+    l2l_lf_type;
   typedef L2PapplyerHF<cluster_type,clusterbasis_type,
-											 expansionhandler_type,m2l_handler_type,particle_type>
-		l2l_hfl_type;
+                       expansionhandler_type,m2l_handler_type,particle_type>
+    l2l_hfl_type;
   typedef L2LapplyerHF< cluster_type,clusterbasis_type,
-												expansionhandler_type,m2l_handler_type>
-		l2l_hf_type;
+                        expansionhandler_type,m2l_handler_type>
+    l2l_hf_type;
   
   for (unsigned int l=0; l<rclvv.size(); ++l) {
     const std::vector<cluster_type*>& rclv = rclvv.at(l);
     m2l_handler_type& m2l = m2lv.at(l);
-		if (m2l.hasInteractions()) {
-			
-			const double t = omp_get_wtime();
-			std::cout << "  at " << l << std::flush;
+    if (m2l.hasInteractions()) {
+      
+      const double t = omp_get_wtime();
+      std::cout << "  at " << l << std::flush;
 
-			switch (m2l.getLevel()->is_in_high_frequency_regime()) {
-			case true: {
+      switch (m2l.getLevel()->is_in_high_frequency_regime()) {
+      case true: {
 
-				const PlaneWave<DIM,ORDER,T>
-					pwave(wavenum, m2l.getLevel());
+        const PlaneWave<DIM,ORDER,T>
+          pwave(wavenum, m2l.getLevel());
 
-				switch (m2l.getLevel()->isLeaf()) {
-				case true: {
+        switch (m2l.getLevel()->isLeaf()) {
+        case true: {
 
-					const PlaneWaveParticles<DIM,ORDER,T,particle_type>
-						ppwave(wavenum, particles, pindices);
+          const PlaneWaveParticles<DIM,ORDER,T,particle_type>
+            ppwave(wavenum, particles, pindices);
 
           l2l_hfl_type l2l(m2l, rbasis, rexph, x, pwave, ppwave);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break;
-				case false: {
+        } break;
+        case false: {
           l2l_hf_type l2l(m2l, rbasis, rexph, pwave);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break; }
-			} break;
-			case false: {
-				switch (m2l.getLevel()->isLeaf()) {
-				case true: {
+        } break; }
+      } break;
+      case false: {
+        switch (m2l.getLevel()->isLeaf()) {
+        case true: {
           l2l_lfl_type l2l(m2l, rbasis, rexph, x);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break;
-				case false: {
+        } break;
+        case false: {
           l2l_lf_type l2l(m2l, rbasis, rexph);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break; }
-			} break;
-			}
-			
-			std::cout << " took " << omp_get_wtime() - t << " s" << std::endl;
+        } break; }
+      } break;
+      }
+      
+      std::cout << " took " << omp_get_wtime() - t << " s" << std::endl;
 
-		}
-	}
+    }
+  }
 
 }
 
@@ -566,11 +566,11 @@ void ApplyL2Loperators
 
 
 /*! 
-	\ingroup mtranslation
+  \ingroup mtranslation
  */
 template <typename cluster_type,
           typename clusterbasis_type,
-					typename expansionhandler_type,
+          typename expansionhandler_type,
           typename m2l_handler_type>
 void ApplyL2Loperators
 (const std::vector<std::vector<cluster_type*> >& rclvv,
@@ -579,47 +579,47 @@ void ApplyL2Loperators
  std::vector<m2l_handler_type>& m2lv,
  typename clusterbasis_type::value_type *const x)
 {
-	enum {DIM = cluster_type::dim,
-				ORDER = clusterbasis_type::order};
-	typedef typename clusterbasis_type::value_type T;
+  enum {DIM = cluster_type::dim,
+        ORDER = clusterbasis_type::order};
+  typedef typename clusterbasis_type::value_type T;
 
   typedef L2PapplyerLF<cluster_type,clusterbasis_type,
-												expansionhandler_type,m2l_handler_type> l2l_lfl_type;
+                        expansionhandler_type,m2l_handler_type> l2l_lfl_type;
   typedef L2LapplyerLF< cluster_type,clusterbasis_type,
-												expansionhandler_type,m2l_handler_type> l2l_lf_type;
+                        expansionhandler_type,m2l_handler_type> l2l_lf_type;
   
   for (unsigned int l=0; l<rclvv.size(); ++l) {
     const std::vector<cluster_type*>& rclv = rclvv.at(l);
     m2l_handler_type& m2l = m2lv.at(l);
-		if (m2l.hasInteractions()) {
-			
-			const double t = omp_get_wtime();
-			std::cout << "  at " << l << std::flush;
+    if (m2l.hasInteractions()) {
+      
+      const double t = omp_get_wtime();
+      std::cout << "  at " << l << std::flush;
 
-				switch (m2l.getLevel()->isLeaf()) {
-				case true: {
+        switch (m2l.getLevel()->isLeaf()) {
+        case true: {
           l2l_lfl_type l2l(m2l, rbasis, rexph, x);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break;
-				case false: {
+        } break;
+        case false: {
           l2l_lf_type l2l(m2l, rbasis, rexph);
 #ifdef DFMM_USE_OMP
 #pragma omp parallel for schedule(dynamic) // guided
-					for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
+          for (int i=0; i<rclv.size(); ++i) l2l(rclv.at(i));
 #else
-					std::for_each(rclv.begin(), rclv.end(), l2l);
+          std::for_each(rclv.begin(), rclv.end(), l2l);
 #endif
-				} break; }
-			
-			std::cout << " took " << omp_get_wtime() - t << " s" << std::endl;
+        } break; }
+      
+      std::cout << " took " << omp_get_wtime() - t << " s" << std::endl;
 
-		}
-	}
+    }
+  }
 
 }
 
