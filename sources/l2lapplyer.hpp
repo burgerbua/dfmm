@@ -28,6 +28,9 @@
 
 #include <boost/foreach.hpp>
 
+#include "sources/planewave.hpp"
+#include "sources/tensorproduct.hpp"
+
 
 /*! 
   \addtogroup mtranslation
@@ -173,7 +176,7 @@ class L2LapplyerLF : L2Lapplyer<cluster_type,m2l_handler_type>
 
   using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
-  PermutationHandler<DIM,ORDER> phandler;
+  TensorProductHandler<DIM,ORDER> phandler;
 
   std::vector<clusterbasis_type>&     rbasis;
   std::vector<expansionhandler_type>& rexph;
@@ -354,7 +357,7 @@ class L2LapplyerHF
 
   using L2Lapplyer<cluster_type,m2l_handler_type>::fcount;
 
-  PermutationHandler<DIM,ORDER> phandler;
+  TensorProductHandler<DIM,ORDER> phandler;
 
   const PlaneWave<DIM,ORDER,T>& pwave;
 

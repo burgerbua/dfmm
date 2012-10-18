@@ -33,8 +33,11 @@
 
 
 /*! \class Storage
+  
+  \brief Manages levels of quad/octree and initializes M2L operators
+  
   The class storage is thought as a kind of singleton; it initializes and
-  stores all levels of the octree.
+  stores all levels of the quad/octree and initializes all M2L operators.
  */
 template <int DIM>
 class Storage

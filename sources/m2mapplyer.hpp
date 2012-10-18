@@ -29,7 +29,7 @@
 #include <boost/foreach.hpp>
 
 #include "sources/planewave.hpp"
-#include "sources/permutations.hpp"
+#include "sources/tensorproduct.hpp"
 
 
 /*! 
@@ -178,7 +178,7 @@ class M2MapplyerLF
 
   using M2Mapplyer<cluster_type,m2l_handler_type>::fcount;
 
-  PermutationHandler<DIM,ORDER> phandler;
+  TensorProductHandler<DIM,ORDER> phandler;
 
   std::vector<clusterbasis_type>& cbasis;
   std::vector<expansionhandler_type>& cexph;
@@ -367,7 +367,7 @@ class M2MapplyerHF
 
   using M2Mapplyer<cluster_type,m2l_handler_type>::fcount;
 
-  PermutationHandler<DIM,ORDER> phandler;
+  TensorProductHandler<DIM,ORDER> phandler;
 
   const PlaneWave<DIM,ORDER,T>& pwave;
 

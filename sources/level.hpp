@@ -40,6 +40,9 @@
  *
  * \class Level
  *
+ * \brief Stores properties and informations which are constant along tree
+ * levels
+ *
  * This class contains the information which is constant along a level in the
  * quad/oct-tree. Mainly it handles the low- and high-frequency regime status
  * of a given level. It also stores the diameter of all clusters in a given
@@ -47,7 +50,6 @@
  * a Level container per cluster level.
  *
  */
-
 template <int DIM>
 class Level
 {

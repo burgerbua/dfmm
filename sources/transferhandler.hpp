@@ -149,7 +149,7 @@ protected:
 
 /*! \ingroup mm2l
 
-  \class Transferhandler
+  \class TransferHandler
 
   \brief Abstract base class for all transfer handler
  

@@ -39,7 +39,14 @@ template <int,int> class Tensor;
 
 
 
+/*! 
+  \class PlaneWaveBase
 
+  \brief Evaluates the plane wave for given point \f$x\f$ and direction
+  \f$u\f$
+
+  @tparam T value_type either double- or float-complex
+ */
 template <typename T>
 class PlaneWaveBase
 {
@@ -60,7 +67,28 @@ public:
 
 
 
+/*! \class PlaneWave
+  
+  \brief Computes and stores child and parent level plane waves for non-leaf
+  levels
 
+  The idea at non-leaf levels is the following. The plane waves
+  \f$p(x)=e^{\imath k u \cdot x}\f$ need to to be computed for all directions
+  \f$u\f$ and for all points \f$x\f$ at all levels, which can sum up to a
+  large number. In non-leaf levels the points become interpolation points
+  \f$\bar x\f$ which lie on a regular grid. That is why we can write them as
+  \f$\bar x_m = c_x + \bar r_m\f$ where \f$c_x\f$ is the center of the
+  respective cluster and \f$\bar r_m\f$ are the coordinates of the
+  interpolation points in the reference cluster at the respective level and
+  being centered at the origin. With this we can rewrite them as \f$p(\bar x)
+  = c e^{\imath k u \cdot \bar r}\f$ with the constant \f$c = e^{\imath u
+  \cdot c_x}\f$.  In this way we need to compute the plane waves for all
+  directions \f$u\f$ once on each level having expansions.
+  
+  \tparam DIM spatial dimension
+  \tparam ORDER interpolation order
+  \tparam T value type, either float- or double-complex
+ */
 template <int DIM, int ORDER, typename T>
 class PlaneWave
   : boost::noncopyable, public PlaneWaveBase<T>
@@ -147,7 +175,15 @@ public:
 
 
 
+/*! \class PlaneWaveParticles
 
+  \brief Computes and stores child plane waves for all clusters at the leaf
+  level
+ 
+  \tparam DIM spatial dimension
+  \tparam ORDER interpolation order
+  \tparam T value type, either float- or double-complex
+ */
 template <int DIM, int ORDER, typename T,
           typename particle_type>
 class PlaneWaveParticles

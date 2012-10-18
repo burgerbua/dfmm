@@ -32,6 +32,8 @@
 
 /*! \class Chebyshev
  
+  \brief Provides the %Chebyshev polynomials of 1st and 2nd kind and roots
+
   This class provides the trigonometric definition of the Chebyshev poynomials
   of 1st and 2nd kind in [-1,1].
   

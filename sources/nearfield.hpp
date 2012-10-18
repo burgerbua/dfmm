@@ -30,6 +30,21 @@
 
 
 
+
+/*! \class NFadder
+  
+  \brief Computes and adds near-field contribution on the fly
+
+  The near-field adder computes and adds the near-field contribution on the
+  fly, ie. it is not stored. Thus, it is advantageous if the goal is to
+  perform a single matrix-vector product. If one is interested in multiple
+  matrix-vector products one might prefer not recomputing but storing it.
+
+  @tparam cluster_type
+  @tparam particle_type
+  @tparam relations_type
+  @tparam kernel_type
+ */
 template <typename cluster_type,
           typename particle_type,
           typename relations_type,

@@ -30,6 +30,16 @@
 template <int> class Cluster;
 
 
+
+/*! \class Relations
+
+  \brief Handles the near- and far-field interactions of a cluster
+
+  To each cluster a instance of Relations is associated. It handles its near-
+  and far-field interactions.
+
+  @tparam DIM spatial dimension
+ */
 template <int DIM>
 class Relations
 {

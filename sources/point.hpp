@@ -36,11 +36,11 @@
 
 
 
-/*! /class Point\
+/*! /class Point
   Geometric point whose dimension and type of coordinates is given by template
   parameters T and DIM.
 
-  \brief point class 
+  \brief %Points can be used as position vectors, vectors, etc.
 
   @tparam T value type of coordinates
   @tparam DIM spatial dimension

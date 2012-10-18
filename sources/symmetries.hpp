@@ -32,7 +32,13 @@
 /**
  * @class Symmetries
  *
- * The class @p Symmetries exploits all symmetries
+ * \brief Handles symmetries in the arrangement of the M2L operators
+ *
+ * The class @p Symmetries exploits all symmetries, so far only symmetries for
+ * the three dimensional case are implemented.
+ *
+ * @tparam ORDER interpolation order
+ * @tparam DIM spatial dimension
  */
 template <int ORDER, int DIM> class Symmetries;
 
@@ -44,14 +50,14 @@ class Symmetries<ORDER,3>
   typedef typename DimTraits<3>::point_int_type point_int_type;
 
 
-  // index permutations (j<i)(k<i)(k<j)
+  /// index permutations (j<i)(k<i)(k<j)
   unsigned int perms[8][3];
 
-  // 48 global permutations (combinations of 8 quadrants and 6 cones
-  // respectively)
+  /// 48 global permutations (combinations of 8 quadrants and 6 cones
+  /// respectively)
   unsigned int permutations[64][nnodes];
 
-  //unsigned int getQuadIdx(const int i, const int j, const int k) const
+  /// return index of quadrant for given point
   unsigned int getQuadIdx(const point_int_type& point) const
   {
     // find right quadrant index (if < 0 then 0, else 1)
@@ -125,6 +131,13 @@ class Symmetries<ORDER,3>
   }
 
 
+  /*!  This function performs the mapping \f$p(t) : T \rightarrow T_{sym}\f$
+    and returns the corresponding permutation matrix \f$\mathsf{P}_t\f$.
+
+    @param[in] ipoint transfer vector \f$t\in T\f$ 
+    @param[out] opoint transfer vector in \f$p(t) \in T_{sym}\f$ 
+    @return permutation matrix \f$\mathsf{P}_t\f$
+   */
   const unsigned int *const getPermutation(const point_int_type& ipoint,
                                            point_int_type& opoint) const
   {
@@ -155,6 +168,15 @@ class Symmetries<ORDER,3>
   }
 
 
+  /*!  This function performs the mapping \f$p(t) : T \rightarrow T_{oct}\f$
+    and returns the corresponding permutation matrix \f$\mathsf{P}_t\f$. Here,
+    \f$T_{oct}\f$ is given by the subset of \f$T\f$ for which \f$t_1, t_2, t_3
+    \ge 0\f$ is true.
+
+    @param[in] ipoint transfer vector \f$t\in T\f$ 
+    @param[out] opoint transfer vector in \f$p(t) \in T_{oct}\f$ 
+    @return permutation matrix \f$\mathsf{P}_t\f$
+   */
   const unsigned int *const getOctant(const point_int_type& ipoint,
                                       point_int_type& opoint) const
   {

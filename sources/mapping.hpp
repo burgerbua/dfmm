@@ -30,8 +30,18 @@
 
 
 
-/**
- * Base class for cluster mapper
+
+/*! 
+  \class Mapping
+
+  \brief Base class for the affine mappings from the reference to an arbitrary
+  interval and vice-versa
+
+  The affine mapping from reference to arbitrary interval \f$\Phi : [-1,1]
+  \rightarrow [a,b]\f$ and its inverse \f$\Phi^{-1} : [a,b] \rightarrow
+  [-1,1]\f$ are derived from this class.
+
+  @tparam DIM spatial dimension
  */
 template <int DIM>
 class Mapping
@@ -81,8 +91,10 @@ public:
 };
 
 
-/**
- * Global to local cluster mapper
+/*! 
+  \class map_glob_loc
+
+  \brief Affine inverse mapping \f$\Phi^{-1} : [a,b] \rightarrow [-1,1]\f$
  */
 template <int DIM>
 class map_glob_loc
@@ -108,8 +120,10 @@ public:
 };
 
 
-/**
- * Local to global cluster mapper
+/*! 
+  \class map_loc_glob
+
+  \brief Affine mapping \f$\Phi : [-1,1] \rightarrow [a,b]\f$
  */
 template <int DIM>
 class map_loc_glob
