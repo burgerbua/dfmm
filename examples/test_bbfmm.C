@@ -72,7 +72,7 @@
 
 template <typename m2l_type,
           typename kernel_type>
-class dFMM
+class bbFMM
 {
   enum {dim   = m2l_type::dim,
         order = m2l_type::order};
@@ -97,7 +97,7 @@ class dFMM
 
 public:
 
-  dFMM(const unsigned int ncl,
+  bbFMM(const unsigned int ncl,
        const kernel_type& _kernel,
        const octree_cluster_vector& _cluster_tree,
        const particle_type *const _particles,
@@ -284,7 +284,7 @@ int main( int argc, char * argv[ ] )
   { // SArcmp ////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerSArcmp<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -297,7 +297,7 @@ int main( int argc, char * argv[ ] )
   { // NA ////////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerNA<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -310,7 +310,7 @@ int main( int argc, char * argv[ ] )
   { // NAsym /////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerNAsym<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -323,7 +323,7 @@ int main( int argc, char * argv[ ] )
   { // NAblk /////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerNAblk<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -336,7 +336,7 @@ int main( int argc, char * argv[ ] )
   { // IA ////////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerIA<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -349,7 +349,7 @@ int main( int argc, char * argv[ ] )
   { // IAsym /////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerIAsym<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
@@ -362,7 +362,7 @@ int main( int argc, char * argv[ ] )
   { // IAblk /////////////////////////////////////////////////////////
     for (unsigned int n=0; n<N; ++n) x[n] = 0.;
     typedef M2LHandlerIAblk<dim,order,value_type> m2l_handler_type;
-    dFMM<m2l_handler_type, kernel_type>
+    bbFMM<m2l_handler_type, kernel_type>
       fmm(ncl, kernel, all_cluster_vectors, particles, pindices);
     fmm.precomputeM2LOperators(storage, eps);
     fmm.multiply(y, x);
