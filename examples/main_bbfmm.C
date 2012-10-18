@@ -70,48 +70,6 @@
 
 
 
-// reads input files (examples can be found in cmk/grid/...)
-template<typename particle_type>
-void ReadParticles(const std::string filename,
-                   const unsigned int N,
-                   particle_type *const particles)
-{
-  double coords[particle_type::point_type::dim];
-  std::ifstream is( filename.c_str() );
-  unsigned int id = 0;
-  for (unsigned int i=0; i<N; ++i) {
-    for (unsigned int d=0; d<particle_type::dim; ++d) is >> coords[d];
-    particles[i]
-      = particle_type(typename particle_type::point_type(coords),id++);
-  }
-  assert(id == N);
-  is.close();
-}
-
-
-
-
-
-
-
-template <typename particle_type>
-const std::pair<typename particle_type::point_type,
-                typename particle_type::point_type>
-GetBoundingBox(const particle_type *const particles, const unsigned int N)
-{
-  const unsigned int dim = particle_type::point_type::dim;
-  typename particle_type::point_type max, min;
-  for (unsigned int d=0; d<dim; ++d) {
-    max[d] = particles[0].getPoint()[d];
-    min[d] = particles[0].getPoint()[d];
-    for (unsigned long p=1; p<N; ++p) {
-      const double value = particles[p].getPoint()[d];
-      if (max[d]<value) max[d] = value;
-      if (min[d]>value) min[d] = value;
-    }
-  }
-  return std::make_pair(min,max);
-}
 
 
 
@@ -204,8 +162,8 @@ int main( int argc, char * argv[ ] )
   //typedef M2LHandlerNAsym<dim,order,value_type> m2l_handler_type;
   //typedef M2LHandlerNAblk<dim,order,value_type> m2l_handler_type;
   //typedef M2LHandlerIA<dim,order,value_type> m2l_handler_type;
-  //typedef M2LHandlerIAsym<dim,order,value_type> m2l_handler_type;
-  typedef M2LHandlerIAblk<dim,order,value_type> m2l_handler_type;
+  typedef M2LHandlerIAsym<dim,order,value_type> m2l_handler_type;
+  //typedef M2LHandlerIAblk<dim,order,value_type> m2l_handler_type;
 
 
   // init m2l handler 

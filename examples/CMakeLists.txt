@@ -67,7 +67,6 @@ target_link_libraries (interpolator
 
 
 
-
 ######################################################################
 ### set here output path for your executables
 
@@ -98,40 +97,87 @@ set_target_properties (
 
 ######################################################################
 ### testing
+
+# test_dfmm
+add_executable (test_dfmm ./test_dfmm.C)
+target_link_libraries (test_dfmm
+  ${BLAS_LIBRARIES}
+  ${LAPACK_LIBRARIES}
+  had_lib
+  )
+
+# test_dfmm
+add_executable (test_bbfmm ./test_bbfmm.C)
+target_link_libraries (test_bbfmm
+  ${BLAS_LIBRARIES}
+  ${LAPACK_LIBRARIES}
+  had_lib
+  )
+
+set_target_properties (
+  test_dfmm
+  test_bbfmm
+  PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
+
+
+
 add_test(
-  NAME points
+  NAME test_points
   COMMAND points
   )
 
 add_test(
-  NAME octree
+  NAME test_octree
   WORKING_DIRECTORY ${BASE_PATH}/cmk
   COMMAND octree ./grid/e2_64_119698.inp 119698 7
   )
 
 add_test(
-  NAME interpolator
+  NAME test_interpolator
   COMMAND interpolator
   )
 
 add_test(
-  NAME aca
+  NAME test_aca
   COMMAND aca .3
   )
 
 add_test(
-  NAME aca316
+  NAME test_aca316
   COMMAND aca316 .3
   )
 
-add_test(
-  NAME dfmm
-  WORKING_DIRECTORY ${BASE_PATH}/cmk
-  COMMAND dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
-  )
+#add_test(
+#  NAME dfmm
+#  WORKING_DIRECTORY ${BASE_PATH}/cmk
+#  COMMAND dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
+#  )
 
 add_test(
-  NAME bbfmm
+  NAME test_dfmm
   WORKING_DIRECTORY ${BASE_PATH}/cmk
-  COMMAND bbfmm ./grid/e2_16_7667.inp 7667 3 1
+  COMMAND test_dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
   )
+
+#add_test(
+#  NAME test_bbfmm
+#  WORKING_DIRECTORY ${BASE_PATH}/cmk
+#  COMMAND bbfmm ./grid/e2_16_7667.inp 7667 3 1
+#  )
+
+add_test(
+  NAME test_bbfmm
+  WORKING_DIRECTORY ${BASE_PATH}/cmk
+  COMMAND test_bbfmm ./grid/e2_16_7667.inp 7667 3 1
+  )
+
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+                  DEPENDS
+                  points
+                  octree
+                  interpolator
+                  aca
+                  aca316
+                  test_dfmm
+                  test_bbfmm)

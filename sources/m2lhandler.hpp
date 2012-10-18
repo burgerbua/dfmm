@@ -139,6 +139,10 @@ class M2LHandlerSArcmp
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   M2LHandlerSArcmp(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerSArcmp"),
       M2LComputerSA<DIM,ORDER,T>(M2LHandler<DIM,T>::fcount)
@@ -228,6 +232,8 @@ class M2LHandlerNA
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
 
   /// Constructor
   M2LHandlerNA(const Level<DIM> *const level)
@@ -299,6 +305,10 @@ class M2LHandlerIA
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   /// Constructor
   M2LHandlerIA(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerIA") {}
@@ -381,6 +391,10 @@ class M2LHandlerNAsym
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   /// Constructor
   M2LHandlerNAsym(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerNAsym")
@@ -465,6 +479,10 @@ class M2LHandlerIAsym
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   //! Constructor
   M2LHandlerIAsym(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerIAsym")
@@ -754,6 +772,10 @@ class M2LHandlerNAblk
   }
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   /// Constructor
   M2LHandlerNAblk(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerNAblk") {}
@@ -857,6 +879,10 @@ class M2LHandlerIAblk
 
 
 public:
+  enum {dim = DIM, order = ORDER};
+  typedef T value_type;
+
+
   //! Constructor
   M2LHandlerIAblk(const Level<DIM> *const level)
     : M2LHandler<DIM,T>(level, "M2LHandlerIAblk")
