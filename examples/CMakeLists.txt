@@ -128,7 +128,7 @@ add_test(
 
 add_test(
   NAME test_octree
-  WORKING_DIRECTORY ${BASE_PATH}/cmk
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMAND octree ./grid/e2_64_119698.inp 119698 7
   )
 
@@ -147,27 +147,15 @@ add_test(
   COMMAND aca316 .3
   )
 
-#add_test(
-#  NAME dfmm
-#  WORKING_DIRECTORY ${BASE_PATH}/cmk
-#  COMMAND dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
-#  )
-
 add_test(
   NAME test_dfmm
-  WORKING_DIRECTORY ${BASE_PATH}/cmk
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMAND test_dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
   )
 
-#add_test(
-#  NAME test_bbfmm
-#  WORKING_DIRECTORY ${BASE_PATH}/cmk
-#  COMMAND bbfmm ./grid/e2_16_7667.inp 7667 3 1
-#  )
-
 add_test(
   NAME test_bbfmm
-  WORKING_DIRECTORY ${BASE_PATH}/cmk
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMAND test_bbfmm ./grid/e2_16_7667.inp 7667 3 1
   )
 
