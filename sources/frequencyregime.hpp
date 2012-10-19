@@ -157,6 +157,8 @@ class Low_Frequency_Regime
 
 
 public:
+  
+  //! \todo Remove global variable \c LF_MIN_DISTANCE_*
   Low_Frequency_Regime(const double extension)
     : Frequency_Regime<DIM>()
   {
@@ -258,6 +260,7 @@ class High_Frequency_Regime
   
 
 public:
+  //! \todo Remove global variable \c HF_MIN_DISTANCE_*
   High_Frequency_Regime(const double extension,
                         const double wavenum)
     : Frequency_Regime<DIM>(),

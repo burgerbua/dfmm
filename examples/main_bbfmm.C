@@ -31,10 +31,8 @@
 #include <algorithm>
 #include <omp.h>
 
-#define FREQUENCY_REGIME_DELIMITER .8
 #define LF_MIN_DISTANCE_1
 #define HF_MIN_DISTANCE_2
-#define SCALE_CONE_APERTURE 2.
 
 
 // dfmm

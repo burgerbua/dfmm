@@ -60,10 +60,17 @@ class Storage
 
 
  public:
+
+  /*! The constructor sets root cluster center and width and creates all
+      quad/octree levels
+      
+      @param[in] bbx bounding box of root cluster
+      @param[in] lmax maximum number of levels
+  */
   explicit Storage(const std::pair<point_type,point_type> bbx,
                    const unsigned int lmax);
   
-
+  
   ~Storage()
   {
     for (typename level_vector::iterator it=levels.begin();
@@ -71,32 +78,42 @@ class Storage
     levels.clear();
   }
 
+  
+  /*! @return number of quad\octree levels */
   const unsigned int getNumLevels() const
   {
     assert(!levels.empty());
     return levels.size();
   }
 
+
+  /*! @return reference to vector containing all levels */
   const level_vector& getLevels() const
   {
     return levels;
   }
 
+  
+  /*! @param[in] l level index
+    @return const pointer to level l
+  */
   const level_type *const getLevel(const unsigned int l) const
   {
     assert(!levels.empty());
     return levels.at(l);
   }
 
+  /*! @param[in] l level index
+    @return pointer to level l
+  */
   level_type *const getLevel(const unsigned int l)
   {
     assert(!levels.empty());
     return levels.at(l);
   }
-
   
-  //! \name Set either levels for a dynamic or static analysis
-  /* @{ */
+
+  /*! Set levels for static analysis */
   void initLevels()
   {
     for (unsigned int l=0; l<levels.size(); ++l) {
@@ -105,48 +122,64 @@ class Storage
     }
   }
 
+
+  /*!  Set levels for dynamic analysis
+
+    \note Based on experience and numerical studies we have found that the
+    threshold between low- and high-frequency regime is given by \f$wk >
+    0.8\f$. The value for \f$0.8\f$ can be chosen differently if desired (it
+    is not recommended, though).
+      
+    @param[in] wavenum wavenumber
+  */
   void initLevels(const double wavenum)
   {
-    const double delimiter = FREQUENCY_REGIME_DELIMITER;
     for (unsigned int l=0; l<levels.size(); ++l) {
       level_type *const level = levels.at(l);
       const double diam = level->getDiam();
-      if (diam*wavenum > delimiter) level->setHighFrequencyRegime(wavenum);
-      else                          level->setLowFrequencyRegime();
+      if (diam*wavenum > 0.8) level->setHighFrequencyRegime(wavenum);
+      else                    level->setLowFrequencyRegime();
     }
   }
-  /* @} */
   
   
-
+  /*! @return root cluster width */
   const double getRootClusterDiam()
   {
     return root_cluster_diam;
   }
   
+
+  /*! @return root cluster center */
   const point_type getRootClusterCenter()
   {
     return root_cluster_center;
   }
 
 
-
-
+  /*! Instantiate an M2L operator per level
+    
+    @param[out] operators vector containing M2L operators
+  */
   template <typename m2l_handler_type>
   void initialize(std::vector<m2l_handler_type>& operators) const
   {
+    operators.clear();
     for (typename level_vector::const_iterator it=levels.begin();
          it!=levels.end(); ++it)
       operators.push_back(m2l_handler_type(*it));
   }
   
 
-
-
+  /*! Write out information of all M2L operators and all levels of the
+      quad/octree
+      
+      @param[in] operators vector containing M2L operators
+  */
   template <typename m2l_handler_type>
-  void writeInfo(const std::vector<m2l_handler_type>& handler) const
+  void writeInfo(const std::vector<m2l_handler_type>& operators) const
   {
-    assert(handler.size() == levels.size());
+    assert(operators.size() == levels.size());
 
     // root cluster info
     std::cout << "\nBounding box of diam " << root_cluster_diam
@@ -156,7 +189,7 @@ class Storage
     std::cout << "- Level info:" << std::endl;
     for (unsigned int l=0; l<levels.size(); ++l) {
       levels.at(l)->writeInfo();
-      handler.at(l).writeInfo();
+      operators.at(l).writeInfo();
     }
   }
   

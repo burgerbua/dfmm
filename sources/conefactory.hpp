@@ -29,6 +29,21 @@
 
 #include "./dimordertraits.hpp"
 
+
+
+/*! 
+  \class Conefactory
+
+  \brief Handles directional cones
+
+  This class provides function which map from a cone index \f$c\f$ to the
+  corresponding cone direction \f$u\f$ and vice-versa. The cone-aperture and
+  hen ce the overall number of cones depends on the cone-aperture criterion
+  \f$\mathcal{O}(1/kw)\f$ where \f$k\f$ and \f$w\f$ are the wavenumber and the
+  cluster width, respectively.
+
+  @tparam DIM spatial dimension
+ */
 template <int> class ConeFactory;
 
 //////////////////////////////////////////////////////////////////////
@@ -120,18 +135,37 @@ class ConeFactory<3>
   enum {dim = 3};
   typedef DimTraits<dim>::point_type point_type;
 
+  const double extension;
+  const double wavenum;
+
+  unsigned int ncones;
+  double cone_angle;
+
+
+
 public:
+  /*!  The constructor computes the number of cones and it angle based on the
+    cluster width \f$w\f$ and the wavenumber \f$k\f$. The cone aperture is
+    determined by the cone-aperture criterion \f$\mathcal{O}(1/kw)\f$.
+
+    \note We use \c scale_cone_aperture as a constant to scale it, here we
+    choose it to be \f$2.0\f$ because it turned out to be the most efficient
+    choice in terms of performance without affecting the accuracy.
+    
+    @param[in] _extension cluster width \f$w\f$
+    @param[in] _wavenum wavenumber \f$k\f$
+   */
   ConeFactory(const double _extension,
               const double _wavenum)
     : extension(_extension),
       wavenum(  _wavenum)
   {
-    const double scale_cone_aperture = SCALE_CONE_APERTURE;
+    // can be modified if desired (not recommended, though)
+    const double scale_cone_aperture = 2.;
 
     // set angle and number of cones
     ncones     = 1;
     cone_angle = 2. * boost::math::constants::pi<double>();
-//    while(cone_angle > 1./(wavenum*extension)) {
     while(cone_angle > scale_cone_aperture/(wavenum*extension) || ncones<4) {
       cone_angle /= 2.;
       ncones     *= 2.;
@@ -145,12 +179,27 @@ public:
   }
 
 
+
+  /*! @return overall number of cones */
   const unsigned int getNCones() const
   {
     return ncones*ncones * 6; // number of cones is 6 times ncones^2
   }
 
 
+
+  /*! @return angle of cone-aperture */
+  const double getConeAngle() const
+  {
+    return cone_angle;
+  }
+
+
+
+  /*!
+    @param[in] c cone index
+    @return cone direction \f$u\f$
+   */
   const point_type getConeDirection(const unsigned int c) const
   {
     assert(c<getNCones());
@@ -175,7 +224,11 @@ public:
 
   }
 
-
+  
+  /*! 
+    @param[in] u cone direction \f$u\f$
+    @return cone index \f$c\f$
+   */
   const unsigned int getConeIdx(const point_type& u) const
   {
     unsigned int pyramid;
@@ -228,20 +281,6 @@ public:
     return pyramid * ncones*ncones + x1*ncones + x2;
   }
 
-
-  const double getConeAngle() const
-  {
-    return cone_angle;
-  }
-
-
-
-private:
-  const double extension;
-  const double wavenum;
-
-  unsigned int ncones;
-  double cone_angle;
 };
 
 
