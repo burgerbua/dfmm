@@ -28,5 +28,5 @@ subsequent truncated SVD).
 
 The dFMM implementation is under the "BSD 2-Clause" license. Feel free to use
 and distribute the code. If you have remarks on bugs, improvements, etc. I
-would be very happy if you let me know. Moreover if you would like to commit
-changes let me know such that I can give you access.
+would be very happy if you let me know. Moreover, if you would like to commit
+changes let me know too, I will give you the necessary rights.
