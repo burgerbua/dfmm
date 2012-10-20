@@ -853,7 +853,7 @@ protected:
 
 
   /*!
-    \todo The fully pivoted ACA doesn't work here, need to find out why!
+    \todo The fully pivoted ACA doesn't work for dFMM, need to find out why!
   */
   void recompress(const double eps) 
   {

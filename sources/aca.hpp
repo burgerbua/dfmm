@@ -183,7 +183,7 @@ namespace dfmm {
       k++;
 
       // throw if rank gets high (k<min(nx,ny))
-      if (k >= (nx<ny?nx:ny))
+      if (k >= maxk)
         throw std::runtime_error("ACA did not converge with " + k);
 
     } while (norm2R > eps*eps * norm2K);
@@ -267,9 +267,8 @@ namespace dfmm {
     double norm2uv(0.);
   
     ////////////////////////////////////////////////
-    // start partially pivoted ACA
+    // start partially pivoted ACA with initial guess for I and J
     unsigned int J = 0, I = 0;
-    //unsigned int J = ny / 2, I = nx / 2;
   
     //////////////////////////////////////////////////////////////////
     // if more rows then columns do row based ACA ////////////////////
@@ -336,7 +335,7 @@ namespace dfmm {
         k++;
         
         // throw if rank gets high (k<min(nx,ny))
-        if (k >= (nx<ny?nx:ny))
+        if (k >= maxk)
           throw std::runtime_error("ACA did not converge with " + k);
         
       } while (norm2uv > eps2 * norm2S);
@@ -406,7 +405,7 @@ namespace dfmm {
         k++;
         
         // throw if rank gets high (k<min(nx,ny))
-        if (k >= (nx<ny?nx:ny))
+        if (k >= maxk)
           throw std::runtime_error("ACA did not converge with " + k);
         
       } while (norm2uv > eps2 * norm2S);
