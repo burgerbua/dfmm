@@ -147,18 +147,29 @@ add_test(
   COMMAND aca316 .3
   )
 
-add_test(
-  NAME test_dfmm
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMAND test_dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
-  )
-
-add_test(
-  NAME test_bbfmm
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMAND test_bbfmm ./grid/e2_16_7667.inp 7667 3 1
-  )
-
+if (DFMM_USE_OMP)
+  add_test(
+    NAME test_dfmm
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND test_dfmm ./grid/e2_16_7667.inp 7667 3 .3 1
+    )
+  add_test(
+    NAME test_bbfmm
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND test_bbfmm ./grid/e2_16_7667.inp 7667 3 1
+    )
+else()
+  add_test(
+    NAME test_dfmm
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND test_dfmm ./grid/e2_16_7667.inp 7667 3 .3
+    )
+  add_test(
+    NAME test_bbfmm
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND test_bbfmm ./grid/e2_16_7667.inp 7667 3
+    )
+endif()
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
                   DEPENDS
