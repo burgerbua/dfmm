@@ -137,7 +137,7 @@ public:
       for (unsigned int n=0; n<nnodes; ++n) {
         for (unsigned int d=0; d<DIM; ++d)
           x[n][d] = map_l2g(d, basis_type::nodes[tensor_type::node_ids[n][d]]);
-        ppw[n] = plane_wave(x[n], u);
+        ppw[n] = this->plane_wave(x[n], u);
       }
       
       // child cluster plane wave
@@ -149,7 +149,7 @@ public:
         // child roots
         for (unsigned int n=0; n<nnodes; ++n) {
           const point_type cx = (x[n] / 2.) + cc;
-          cpw[b*nnodes + n] = plane_wave(cx, u);
+          cpw[b*nnodes + n] = this->plane_wave(cx, u);
         }
       }
       
@@ -214,7 +214,7 @@ public:
     const unsigned int nbeg = cl->getNbeg();
     for (unsigned int n=0; n<cl->getSize(); ++n) {
       const point_type& point = particles[pindices[nbeg+n]].getPoint();
-      cpw[n] = plane_wave(point, u);
+      cpw[n] = this->plane_wave(point, u);
     }
   }
 

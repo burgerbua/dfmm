@@ -3,8 +3,8 @@
 include_directories (
   ${BASE_PATH}
   ${BOOST_INCLUDE_PATH}
-)
-
+	${Boost_INCLUDE_DIRS}
+	)
 
 # create test programs
 ######################################################################

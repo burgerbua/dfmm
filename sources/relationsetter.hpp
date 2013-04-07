@@ -191,7 +191,7 @@ public:
                   relations.at(clx->getParent()->getCidx()).getNeighbors()) {
       for (unsigned int b=0; b<cluster_type::nboxes; ++b) {
         const cluster_type *const cly = clY->getChild(b);
-        if (cly) setRelation(clx, cly);
+        if (cly) this->setRelation(clx, cly);
       }
     }
   }

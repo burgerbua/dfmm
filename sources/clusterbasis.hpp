@@ -53,8 +53,10 @@ private:
 
 
 public:
+//  explicit ClusterBasis()
+//    : S(NULL) {}
   explicit ClusterBasis()
-    : S(NULL) {}
+    : S() {}
 
   void assign(const boost::shared_array<T>& _S)
   {

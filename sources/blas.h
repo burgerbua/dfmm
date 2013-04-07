@@ -222,7 +222,7 @@ namespace dfmm
     void zscal_(const unsigned*, const dcomp*, const dcomp*,
                 const unsigned*);
 
-#ifdef DFMM_USE_MKL
+#if defined(DFMM_USE_MKL) || defined(DFMM_APPLE)
     void zdotc_(dcomp*, const unsigned*, const dcomp*, const unsigned*,
                  const dcomp*, const unsigned*);
 #else
@@ -415,7 +415,7 @@ namespace blas
   inline dcomp scpr(const unsigned n, const dcomp* const v1,
                     const dcomp* const v2)
   {
-#ifdef DFMM_USE_MKL
+#if defined(DFMM_USE_MKL) || defined(DFMM_APPLE)
     dcomp result;
     zdotc_(&result, &n, v1, &N_ONE, v2, &N_ONE);
     return result;

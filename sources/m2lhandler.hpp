@@ -262,7 +262,8 @@ public:
   {
     static const unsigned int nnodes = BasisTraits<ORDER,DIM>::nnodes;
     const T *const K = operators.at(t_id);
-    applyK(nnodes, nnodes, const_cast<T *const>(K), const_cast<T *const>(Y), X);
+    this->applyK(nnodes, nnodes, const_cast<T *const>(K),
+								 const_cast<T *const>(Y), X);
 
     // count flops
     fcount.addFlops(nnodes*(2*nnodes-1) + nnodes);
@@ -434,7 +435,7 @@ public:
     // permute
     for (unsigned int n=0; n<nnodes; ++n) Yp[pvec[n]] = Y[n];
     // apply K
-    applyK(nnodes, nnodes, K, Yp, Xp);
+    this->applyK(nnodes, nnodes, K, Yp, Xp);
     // permute back
     for (unsigned int n=0; n<nnodes; ++n) X[n] += Xp[pvec[n]];
 

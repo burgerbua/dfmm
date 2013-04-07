@@ -28,7 +28,10 @@ endif (COMMAND cmake_policy)
 
 
 # OS
-set (CMAKE_SYSTEM LINUX)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	add_definitions (-DDFMM_APPLE)
+	list(APPEND CMAKE_INCLUDE_PATH /opt/local/include)
+endif()
 
 
 # gprof
@@ -75,8 +78,10 @@ if (DFMM_COUNT_FLOPS)
   add_definitions(-DDFMM_COUNT_FLOPS)
 endif()
 
-# Boost
+
+# boost
 include (FindBoost)
+
 
 # OpenMP
 include (FindOpenMP)

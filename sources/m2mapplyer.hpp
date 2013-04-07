@@ -139,11 +139,12 @@ public:
 
     // apply M2M
     value_type *const Y = cexph.at(cidx).getExpansions().at(0)->getvals();
-    applyM2M(cbasis.at(cidx).getS(),cly->getSize(),y+cly->getNbeg(),nnodes,Y);
+    this->applyM2M(cbasis.at(cidx).getS(),cly->getSize(),y+cly->getNbeg(),
+									 nnodes,Y);
     assert(check_nan(nnodes, Y)); 
 
     // do something only for Qu Ci Qb' convolution
-    compress(Y);
+    this->compress(Y);
     assert(check_nan(nnodes, Y+nnodes)); 
   }
 };
@@ -214,7 +215,7 @@ public:
     assert(check_nan(nnodes, Y)); 
 
     // do something only for Qu Ci Qb' convolution
-    compress(Y);
+    this->compress(Y);
     assert(check_nan(nnodes, Y+nnodes)); 
   }
 
@@ -327,7 +328,7 @@ public:
       fcount.addFlops(2*nnodes + 7); // had-product of ppw
       
       // do something only for Qu Ci Qb' convolution
-      compress(Y, c);
+      this->compress(Y, c);
     }
     delete [] Y_all; // free memory
    
@@ -454,7 +455,7 @@ public:
 
       // do something only for Qu Ci Qb' convolution
       const unsigned int c = pY.first;
-      compress(Y, c);
+      this->compress(Y, c);
     }
 
     // free memory

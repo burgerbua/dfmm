@@ -142,10 +142,10 @@ public:
 
     // does something only for Qu Ci Qb' convolution
     value_type *const X = rexph.at(cidx).getExpansions().at(0)->getvals();
-    expand(X);
+    this->expand(X);
 
-    applyL2L(rbasis.at(cidx).getS(), nnodes, X, clx->getSize(),
-             x+clx->getNbeg());
+    this->applyL2L(rbasis.at(cidx).getS(), nnodes, X, clx->getSize(),
+									 x+clx->getNbeg());
   }
 };
 
@@ -200,7 +200,7 @@ public:
     // does something only for Qu Ci Qb' convolution
     expansion_type *const expansion = rexph.at(cidx).getExpansions().at(0);
     value_type *const X = expansion->getvals();
-    expand(X);
+    this->expand(X);
 
     // apply l2l
     const value_type *const S = rbasis.at(cidx).getS();
@@ -288,7 +288,7 @@ public:
       // does something only for Qu Ci Qb' convolution
       const unsigned int c = ep.first;
       value_type *const X = expansion->getvals();
-      expand(X, c);
+      this->expand(X, c);
       
       // apply plane wave
       const value_type scal = pwave.plane_wave(center, expansion->getu());
@@ -397,7 +397,7 @@ public:
       // does something only for Qu Ci Qb' convolution
       const unsigned int c = ep.first;
       value_type *const X = expansion->getvals();
-      expand(X, c);
+      this->expand(X, c);
       
       // apply plane wave
       const point_type& u = expansion->getu();
